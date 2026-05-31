@@ -1,0 +1,64 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// Define a purple/pink theme for nail salon
+$nail-primary: mat.m2-define-palette(mat.$m2-purple-palette, 700, 300, 900);
+$nail-accent:  mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400);
+$nail-warn:    mat.m2-define-palette(mat.$m2-red-palette);
+
+$nail-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $nail-primary,
+    accent:  $nail-accent,
+    warn:    $nail-warn,
+  ),
+  typography: mat.m2-define-typography-config(),
+  density: 0,
+));
+
+@include mat.all-component-themes($nail-theme);
+
+// Global resets & base styles
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: #f8f5fb;
+  color: #333;
+}
+
+// Material overrides
+.mat-mdc-card {
+  border-radius: 12px !important;
+}
+
+.mat-mdc-raised-button.mat-primary {
+  background: linear-gradient(135deg, #7b1fa2, #9c27b0) !important;
+}
+
+// Shared status badge utility (used across components)
+.status-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+
+  &.status-pending  { background: #fff3e0; color: #e65100; }
+  &.status-approved { background: #e8f5e9; color: #1b5e20; }
+  &.status-rejected { background: #ffebee; color: #b71c1c; }
+  &.status-completed{ background: #e3f2fd; color: #0d47a1; }
+}
+
+// Scrollbar styling
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #c8a0d6; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9c27b0; }

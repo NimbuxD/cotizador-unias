@@ -1,0 +1,44 @@
+.app-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.app-sidenav {
+  width: 240px;
+  border-right: 1px solid #e8e0ed;
+}
+
+.app-toolbar {
+  background: white;
+  border-bottom: 1px solid #e8e0ed;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  .toolbar-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-left: 8px;
+  }
+
+  .toolbar-spacer {
+    flex: 1 1 auto;
+  }
+}
+
+.app-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #f8f5fb;
+}

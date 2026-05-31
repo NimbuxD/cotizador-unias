@@ -1,0 +1,154 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/services">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1>{{ isEdit ? 'Editar Servicio' : 'Nuevo Servicio' }}</h1>
+      <p>{{ isEdit ? 'Modifica los datos del servicio' : 'Crea un nuevo servicio de uñas' }}</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else {
+    <div class="form-layout">
+      <mat-card class="main-form">
+        <mat-card-header>
+          <mat-card-title>Información del Servicio</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nombre del servicio</mat-label>
+              <input matInput formControlName="name" placeholder="Ej: Manicure con Gel">
+              <mat-error *ngIf="form.get('name')?.hasError('required')">El nombre es obligatorio</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Descripción (opcional)</mat-label>
+              <textarea matInput formControlName="description" rows="2"></textarea>
+            </mat-form-field>
+
+            <div class="two-cols">
+              <mat-form-field appearance="outline">
+                <mat-label>Precio base ($)</mat-label>
+                <input matInput type="number" formControlName="basePrice" min="0">
+                <mat-icon matPrefix>attach_money</mat-icon>
+                <mat-hint>Precio de venta al cliente</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Costo mano de obra ($)</mat-label>
+                <input matInput type="number" formControlName="laborCost" min="0">
+                <mat-icon matPrefix>attach_money</mat-icon>
+                <mat-hint>Costo de trabajo/tiempo</mat-hint>
+              </mat-form-field>
+            </div>
+
+            <mat-divider class="section-divider"></mat-divider>
+
+            <!-- Materials Section -->
+            <div class="materials-section">
+              <div class="materials-header">
+                <h3>Materiales necesarios</h3>
+                <button mat-stroked-button color="primary" type="button" (click)="addMaterial()">
+                  <mat-icon>add</mat-icon>
+                  Agregar Material
+                </button>
+              </div>
+
+              @if (materials.length === 0) {
+                <div class="no-materials">
+                  <mat-icon>inventory_2</mat-icon>
+                  <span>No hay materiales agregados</span>
+                  <small>Agrega los materiales que se usan en este servicio para calcular el costo real</small>
+                </div>
+              }
+
+              <div formArrayName="materials">
+                @for (material of materials.controls; track $index; let i = $index) {
+                  <div class="material-row" [formGroupName]="i">
+                    <mat-form-field appearance="outline" class="material-select">
+                      <mat-label>Producto</mat-label>
+                      <mat-select formControlName="productId">
+                        @for (product of products; track product.id) {
+                          <mat-option [value]="product.id">
+                            {{ product.name }} ({{ product.unit }})
+                          </mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="quantity-field">
+                      <mat-label>Cantidad</mat-label>
+                      <input matInput type="number" formControlName="quantity" min="0.01" step="0.01">
+                    </mat-form-field>
+
+                    <div class="material-cost">
+                      <span class="cost-label">Costo:</span>
+                      <span class="cost-value">\${{ getMaterialCost(i) | number:'1.0-2' }}</span>
+                    </div>
+
+                    <button mat-icon-button color="warn" type="button" (click)="removeMaterial(i)">
+                      <mat-icon>remove_circle</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button mat-stroked-button type="button" routerLink="/services">Cancelar</button>
+              <button mat-raised-button color="primary" type="submit" [disabled]="saving">
+                @if (saving) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                } @else {
+                  <ng-container>
+                    <mat-icon>save</mat-icon>
+                    {{ isEdit ? 'Actualizar' : 'Crear Servicio' }}
+                  </ng-container>
+                }
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Cost Summary -->
+      <mat-card class="cost-summary">
+        <mat-card-header>
+          <mat-card-title>Resumen de Costos</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="cost-item">
+            <span>Mano de obra</span>
+            <span>\${{ (form.get('laborCost')?.value || 0) | number:'1.0-0' }}</span>
+          </div>
+          <div class="cost-item">
+            <span>Materiales</span>
+            <span>\${{ totalMaterialCost | number:'1.0-0' }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="cost-item total">
+            <span>Costo Total Real</span>
+            <span>\${{ totalCost | number:'1.0-0' }}</span>
+          </div>
+          <div class="cost-item price">
+            <span>Precio de Venta</span>
+            <span>\${{ (form.get('basePrice')?.value || 0) | number:'1.0-0' }}</span>
+          </div>
+          @if (form.get('basePrice')?.value > 0) {
+            <div class="margin-info" [class.positive]="(form.get('basePrice')?.value - totalCost) > 0">
+              <mat-icon>{{ (form.get('basePrice')?.value - totalCost) > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+              <span>Margen: \${{ (form.get('basePrice')?.value - totalCost) | number:'1.0-0' }}</span>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>

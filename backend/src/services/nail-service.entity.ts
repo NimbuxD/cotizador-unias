@@ -1,0 +1,32 @@
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  OneToMany,
+} from 'typeorm';
+import { ServiceMaterial } from './service-material.entity';
+
+@Entity('nail_services')
+export class NailService {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ length: 200 })
+  name: string;
+
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
+  @Column({ nullable: true })
+  estimatedDuration: number; // in minutes
+
+  @Column('decimal', { precision: 10, scale: 2, default: 0 })
+  basePrice: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @OneToMany(() => ServiceMaterial, (sm) => sm.service, { cascade: true })
+  materials: ServiceMaterial[];
+}

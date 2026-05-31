@@ -1,0 +1,131 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <h1>Productos</h1>
+      <p>Gestiona tu inventario de materiales</p>
+    </div>
+    <button mat-raised-button color="primary" routerLink="/products/new">
+      <mat-icon>add</mat-icon>
+      Nuevo Producto
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <!-- Search -->
+      <mat-form-field class="search-field" appearance="outline">
+        <mat-label>Buscar productos</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()" placeholder="Nombre, categoría...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      @if (loading) {
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      } @else {
+        <div class="table-container">
+          <table mat-table [dataSource]="filteredProducts" class="products-table">
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Nombre</th>
+              <td mat-cell *matCellDef="let product">
+                <strong>{{ product.name }}</strong>
+                @if (product.description) {
+                  <br><small class="description">{{ product.description }}</small>
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>Categoría</th>
+              <td mat-cell *matCellDef="let product">
+                @if (product.category) {
+                  <span class="category-chip">{{ product.category }}</span>
+                } @else {
+                  <span class="no-data">—</span>
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="unit">
+              <th mat-header-cell *matHeaderCellDef>Unidad</th>
+              <td mat-cell *matCellDef="let product">{{ product.unit }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="costPerUnit">
+              <th mat-header-cell *matHeaderCellDef>Costo/Unidad</th>
+              <td mat-cell *matCellDef="let product">
+                <span class="cost">\${{ product.costPerUnit | number:'1.0-2' }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="stock">
+              <th mat-header-cell *matHeaderCellDef>Stock</th>
+              <td mat-cell *matCellDef="let product">
+                <span [class.low-stock-text]="isLowStock(product)">
+                  {{ product.stock }} {{ product.unit }}
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="minStock">
+              <th mat-header-cell *matHeaderCellDef>Stock Mínimo</th>
+              <td mat-cell *matCellDef="let product">{{ product.minStock }} {{ product.unit }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let product">
+                @if (isLowStock(product)) {
+                  <span class="status-chip low-stock">
+                    <mat-icon>warning</mat-icon>
+                    Stock Bajo
+                  </span>
+                } @else {
+                  <span class="status-chip ok">
+                    <mat-icon>check_circle</mat-icon>
+                    OK
+                  </span>
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let product">
+                <button mat-icon-button color="primary"
+                        [routerLink]="['/products/edit', product.id]"
+                        matTooltip="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn"
+                        (click)="deleteProduct(product)"
+                        matTooltip="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
+                @if (searchTerm) {
+                  No se encontraron productos para "{{ searchTerm }}"
+                } @else {
+                  No hay productos registrados. <a routerLink="/products/new">Crear el primero</a>
+                }
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span class="count-label">{{ filteredProducts.length }} producto(s)</span>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

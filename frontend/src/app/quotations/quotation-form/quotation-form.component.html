@@ -1,0 +1,208 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/quotations">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1>{{ isEdit ? 'Editar Cotización' : 'Nueva Cotización' }}</h1>
+      <p>{{ isEdit ? 'Modifica los datos de la cotización' : 'Crea una cotización para tu cliente' }}</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else {
+    <div class="form-layout">
+      <div class="left-column">
+
+        <!-- Client Info -->
+        <mat-card>
+          <mat-card-header>
+            <mat-icon mat-card-avatar>person</mat-icon>
+            <mat-card-title>Datos del Cliente</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <form [formGroup]="form">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nombre del cliente</mat-label>
+                <input matInput formControlName="clientName" placeholder="Nombre completo">
+                <mat-icon matPrefix>person</mat-icon>
+                <mat-error *ngIf="form.get('clientName')?.hasError('required')">El nombre es obligatorio</mat-error>
+              </mat-form-field>
+
+              <div class="two-cols">
+                <mat-form-field appearance="outline">
+                  <mat-label>Teléfono</mat-label>
+                  <input matInput formControlName="clientPhone" placeholder="+56 9...">
+                  <mat-icon matPrefix>phone</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Email</mat-label>
+                  <input matInput formControlName="clientEmail" type="email">
+                  <mat-icon matPrefix>email</mat-icon>
+                  <mat-error *ngIf="form.get('clientEmail')?.hasError('email')">Email inválido</mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="two-cols">
+                <mat-form-field appearance="outline">
+                  <mat-label>Estado</mat-label>
+                  <mat-select formControlName="status">
+                    @for (opt of statusOptions; track opt.value) {
+                      <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Notas</mat-label>
+                <textarea matInput formControlName="notes" rows="2"
+                          placeholder="Observaciones adicionales..."></textarea>
+              </mat-form-field>
+            </form>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Services -->
+        <mat-card class="services-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>spa</mat-icon>
+            <mat-card-title>Servicios</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <button mat-stroked-button color="primary" type="button" (click)="addService()" class="add-service-btn">
+              <mat-icon>add</mat-icon>
+              Agregar Servicio
+            </button>
+
+            @if (services.length === 0) {
+              <div class="no-services">
+                <mat-icon>spa</mat-icon>
+                <span>No hay servicios agregados</span>
+              </div>
+            }
+
+            <div [formGroup]="form">
+              <div formArrayName="services">
+                @for (svc of services.controls; track $index; let i = $index) {
+                  <div class="service-row" [formGroupName]="i">
+                    <div class="service-select-row">
+                      <mat-form-field appearance="outline" class="service-select">
+                        <mat-label>Servicio</mat-label>
+                        <mat-select formControlName="serviceId" (selectionChange)="onServiceChange(i)">
+                          @for (ns of nailServices; track ns.id) {
+                            <mat-option [value]="ns.id">{{ ns.name }}</mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline" class="qty-field">
+                        <mat-label>Cant.</mat-label>
+                        <input matInput type="number" formControlName="quantity" min="1">
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline" class="price-field">
+                        <mat-label>Precio unit.</mat-label>
+                        <input matInput type="number" formControlName="unitPrice" min="0">
+                        <span matPrefix>$</span>
+                      </mat-form-field>
+
+                      <button mat-icon-button color="warn" type="button" (click)="removeService(i)">
+                        <mat-icon>remove_circle</mat-icon>
+                      </button>
+                    </div>
+
+                    <div class="service-subtotal">
+                      Subtotal: <strong>\${{ getServiceSubtotal(i) | number:'1.0-0' }}</strong>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button mat-stroked-button routerLink="/quotations">Cancelar</button>
+          <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="saving">
+            @if (saving) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <ng-container>
+                <mat-icon>save</mat-icon>
+                {{ isEdit ? 'Actualizar' : 'Crear Cotización' }}
+              </ng-container>
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Cost Summary Sidebar -->
+      <mat-card class="cost-summary">
+        <mat-card-header>
+          <mat-card-title>Resumen</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="summary-section">
+            <h4>Desglose de Costos Reales</h4>
+            <div class="cost-line">
+              <span>Mano de Obra</span>
+              <span>\${{ totalLaborCost | number:'1.0-0' }}</span>
+            </div>
+            <div class="cost-line">
+              <span>Materiales</span>
+              <span>\${{ totalMaterialCost | number:'1.0-0' }}</span>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="cost-line subtotal">
+              <span>Costo Real Total</span>
+              <span>\${{ (totalLaborCost + totalMaterialCost) | number:'1.0-0' }}</span>
+            </div>
+          </div>
+
+          <mat-divider class="section-divider"></mat-divider>
+
+          <div class="summary-section">
+            <h4>Total a Cobrar</h4>
+            <div class="total-amount">
+              \${{ totalCost | number:'1.0-0' }}
+            </div>
+          </div>
+
+          @if (totalCost > 0 && (totalLaborCost + totalMaterialCost) > 0) {
+            <mat-divider class="section-divider"></mat-divider>
+            <div class="margin-section"
+                 [class.positive]="totalCost > (totalLaborCost + totalMaterialCost)">
+              <mat-icon>{{ totalCost > (totalLaborCost + totalMaterialCost) ? 'trending_up' : 'trending_down' }}</mat-icon>
+              <div>
+                <span class="margin-label">Margen</span>
+                <span class="margin-value">
+                  \${{ (totalCost - totalLaborCost - totalMaterialCost) | number:'1.0-0' }}
+                </span>
+              </div>
+            </div>
+          }
+
+          @if (services.length > 0) {
+            <div class="services-summary">
+              <h4>Servicios ({{ services.length }})</h4>
+              @for (svc of services.controls; track $index; let i = $index) {
+                @if (svc.get('serviceId')?.value) {
+                  <div class="service-summary-item">
+                    <span>{{ getServiceName(svc.get('serviceId')?.value) }}</span>
+                    <span>\${{ getServiceSubtotal(i) | number:'1.0-0' }}</span>
+                  </div>
+                }
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>
