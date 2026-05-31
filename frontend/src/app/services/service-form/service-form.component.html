@@ -90,7 +90,7 @@
 
                     <div class="material-cost">
                       <span class="cost-label">Costo:</span>
-                      <span class="cost-value">\${{ getMaterialCost(i) | number:'1.0-2' }}</span>
+                      <span class="cost-value">{{ getMaterialCost(i) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
                     </div>
 
                     <button mat-icon-button color="warn" type="button" (click)="removeMaterial(i)">
@@ -126,25 +126,25 @@
         <mat-card-content>
           <div class="cost-item">
             <span>Mano de obra</span>
-            <span>\${{ (form.get('laborCost')?.value || 0) | number:'1.0-0' }}</span>
+            <span>{{ (form.get('laborCost')?.value || 0) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
           </div>
           <div class="cost-item">
             <span>Materiales</span>
-            <span>\${{ totalMaterialCost | number:'1.0-0' }}</span>
+            <span>{{ totalMaterialCost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
           </div>
           <mat-divider></mat-divider>
           <div class="cost-item total">
             <span>Costo Total Real</span>
-            <span>\${{ totalCost | number:'1.0-0' }}</span>
+            <span>{{ totalCost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
           </div>
           <div class="cost-item price">
             <span>Precio de Venta</span>
-            <span>\${{ (form.get('basePrice')?.value || 0) | number:'1.0-0' }}</span>
+            <span>{{ (form.get('basePrice')?.value || 0) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
           </div>
           @if (form.get('basePrice')?.value > 0) {
             <div class="margin-info" [class.positive]="(form.get('basePrice')?.value - totalCost) > 0">
               <mat-icon>{{ (form.get('basePrice')?.value - totalCost) > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-              <span>Margen: \${{ (form.get('basePrice')?.value - totalCost) | number:'1.0-0' }}</span>
+              <span>Margen: {{ (form.get('basePrice')?.value - totalCost) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
             </div>
           }
         </mat-card-content>

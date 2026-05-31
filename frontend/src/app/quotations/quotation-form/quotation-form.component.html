@@ -117,7 +117,7 @@
                     </div>
 
                     <div class="service-subtotal">
-                      Subtotal: <strong>\${{ getServiceSubtotal(i) | number:'1.0-0' }}</strong>
+                      Subtotal: <strong>{{ getServiceSubtotal(i) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</strong>
                     </div>
                   </div>
                 }
@@ -152,16 +152,16 @@
             <h4>Desglose de Costos Reales</h4>
             <div class="cost-line">
               <span>Mano de Obra</span>
-              <span>\${{ totalLaborCost | number:'1.0-0' }}</span>
+              <span>{{ totalLaborCost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
             </div>
             <div class="cost-line">
               <span>Materiales</span>
-              <span>\${{ totalMaterialCost | number:'1.0-0' }}</span>
+              <span>{{ totalMaterialCost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
             </div>
             <mat-divider></mat-divider>
             <div class="cost-line subtotal">
               <span>Costo Real Total</span>
-              <span>\${{ (totalLaborCost + totalMaterialCost) | number:'1.0-0' }}</span>
+              <span>{{ (totalLaborCost + totalMaterialCost) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
             </div>
           </div>
 
@@ -170,7 +170,7 @@
           <div class="summary-section">
             <h4>Total a Cobrar</h4>
             <div class="total-amount">
-              \${{ totalCost | number:'1.0-0' }}
+              {{ totalCost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}
             </div>
           </div>
 
@@ -182,7 +182,7 @@
               <div>
                 <span class="margin-label">Margen</span>
                 <span class="margin-value">
-                  \${{ (totalCost - totalLaborCost - totalMaterialCost) | number:'1.0-0' }}
+                  {{ (totalCost - totalLaborCost - totalMaterialCost) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}
                 </span>
               </div>
             </div>
@@ -195,7 +195,7 @@
                 @if (svc.get('serviceId')?.value) {
                   <div class="service-summary-item">
                     <span>{{ getServiceName(svc.get('serviceId')?.value) }}</span>
-                    <span>\${{ getServiceSubtotal(i) | number:'1.0-0' }}</span>
+                    <span>{{ getServiceSubtotal(i) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
                   </div>
                 }
               }
