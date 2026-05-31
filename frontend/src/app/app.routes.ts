@@ -50,5 +50,21 @@ export const routes: Routes = [
     path: 'reports',
     loadComponent: () => import('./reports/reports.component').then(m => m.ReportsComponent)
   },
+  {
+    path: 'catalog',
+    loadComponent: () => import('./catalog/catalog-list/catalog-list.component').then(m => m.CatalogListComponent)
+  },
+  {
+    path: 'catalog/new',
+    loadComponent: () => import('./catalog/catalog-form/catalog-form.component').then(m => m.CatalogFormComponent)
+  },
+  {
+    path: 'catalog/:id/edit',
+    loadComponent: () => import('./catalog/catalog-form/catalog-form.component').then(m => m.CatalogFormComponent)
+  },
+  {
+    path: 'catalog/:id',
+    loadComponent: () => import('./catalog/catalog-detail/catalog-detail.component').then(m => m.CatalogDetailComponent)
+  },
   { path: '**', redirectTo: '/dashboard' }
 ];

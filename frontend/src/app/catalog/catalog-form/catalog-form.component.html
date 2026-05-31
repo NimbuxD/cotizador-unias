@@ -1,0 +1,128 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/catalog">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1>{{ isEdit ? 'Editar Trabajo' : 'Nuevo Trabajo en Catálogo' }}</h1>
+      <p>{{ isEdit ? 'Modifica los datos del trabajo' : 'Agrega un trabajo a tu portafolio' }}</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else {
+    <div class="form-layout">
+      <form [formGroup]="form" class="main-form">
+
+        <!-- Basic Info -->
+        <mat-card>
+          <mat-card-header>
+            <mat-icon mat-card-avatar>edit</mat-icon>
+            <mat-card-title>Información del Trabajo</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Título</mat-label>
+              <input matInput formControlName="title" placeholder="Ej: Uñas acrílicas francesas">
+              <mat-error *ngIf="form.get('title')?.hasError('required')">El título es obligatorio</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Servicio relacionado</mat-label>
+              <input matInput formControlName="serviceName" placeholder="Ej: Uñas Acrílicas">
+              <mat-icon matPrefix>spa</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Descripción</mat-label>
+              <textarea matInput formControlName="description" rows="3"
+                        placeholder="Detalles del trabajo realizado..."></textarea>
+            </mat-form-field>
+
+            <!-- Tags -->
+            <div class="tags-section">
+              <label class="tags-label">Etiquetas</label>
+              <div class="tags-input-row">
+                <mat-form-field appearance="outline" class="tag-input-field">
+                  <mat-label>Agregar etiqueta</mat-label>
+                  <input matInput formControlName="tagInput"
+                         placeholder="Escribe y presiona Enter o coma"
+                         (keydown.enter)="$event.preventDefault(); addTag()"
+                         (input)="addTagsFromInput($event)">
+                </mat-form-field>
+                <button mat-stroked-button type="button" (click)="addTag()">
+                  <mat-icon>add</mat-icon>
+                  Agregar
+                </button>
+              </div>
+              @if (tags.length > 0) {
+                <div class="tags-list">
+                  @for (tag of tags; track tag) {
+                    <mat-chip class="tag-chip" (removed)="removeTag(tag)">
+                      {{ tag }}
+                      <button matChipRemove>
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip>
+                  }
+                </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Photos -->
+        <mat-card class="photos-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>photo_library</mat-icon>
+            <mat-card-title>Fotos</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (photos.length > 0) {
+              <div class="photos-grid">
+                @for (photo of photos; track $index; let i = $index) {
+                  <div class="photo-item">
+                    <img [src]="photo" [alt]="'Foto ' + (i + 1)" class="photo-thumb">
+                    <div class="photo-overlay">
+                      <button mat-icon-button (click)="removePhoto(i)" matTooltip="Eliminar">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            <label class="upload-area">
+              <input type="file" accept="image/*" multiple (change)="onPhotoSelected($event)" hidden>
+              <div class="upload-placeholder" onclick="this.closest('label').querySelector('input').click()">
+                <mat-icon>add_photo_alternate</mat-icon>
+                <span>Haz clic para subir fotos</span>
+                <span class="upload-hint">PNG, JPG, WEBP</span>
+              </div>
+            </label>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button mat-stroked-button routerLink="/catalog">Cancelar</button>
+          <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="saving">
+            @if (saving) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <ng-container>
+                <mat-icon>save</mat-icon>
+                {{ isEdit ? 'Actualizar' : 'Guardar en Catálogo' }}
+              </ng-container>
+            }
+          </button>
+        </div>
+
+      </form>
+    </div>
+  }
+</div>

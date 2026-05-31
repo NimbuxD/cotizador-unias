@@ -1,0 +1,71 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>Catálogo de Trabajos</h1>
+      <p>Galería de trabajos realizados</p>
+    </div>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" routerLink="/catalog/new">
+        <mat-icon>add</mat-icon>
+        Nuevo trabajo
+      </button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (items.length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">photo_library</mat-icon>
+      <h2>Sin trabajos en el catálogo</h2>
+      <p>Agrega tu primer trabajo para construir tu portafolio</p>
+      <button mat-raised-button color="primary" routerLink="/catalog/new">
+        <mat-icon>add</mat-icon>
+        Agregar primer trabajo
+      </button>
+    </div>
+  } @else {
+    <div class="catalog-grid">
+      @for (item of items; track item.id) {
+        <mat-card class="catalog-card" (click)="goToDetail(item.id)">
+          <div class="card-photo">
+            @if (getMainPhoto(item)) {
+              <img [src]="getMainPhoto(item)!" [alt]="item.title" class="main-photo">
+            } @else {
+              <div class="photo-placeholder">
+                <mat-icon>photo_camera</mat-icon>
+              </div>
+            }
+            @if (item.photos && item.photos.length > 1) {
+              <span class="photo-count">
+                <mat-icon>collections</mat-icon>
+                {{ item.photos.length }}
+              </span>
+            }
+          </div>
+          <mat-card-content>
+            <h3 class="card-title">{{ item.title }}</h3>
+            @if (item.serviceName) {
+              <p class="service-name">
+                <mat-icon>spa</mat-icon>
+                {{ item.serviceName }}
+              </p>
+            }
+            @if (item.tags && item.tags.length > 0) {
+              <div class="tags-row">
+                @for (tag of item.tags.slice(0, 3); track tag) {
+                  <mat-chip class="tag-chip">{{ tag }}</mat-chip>
+                }
+                @if (item.tags.length > 3) {
+                  <span class="more-tags">+{{ item.tags.length - 3 }}</span>
+                }
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

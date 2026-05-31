@@ -20,6 +20,7 @@ export class NavigationComponent {
     { path: '/products', label: 'Productos', icon: 'inventory_2' },
     { path: '/services', label: 'Servicios', icon: 'spa' },
     { path: '/quotations', label: 'Cotizaciones', icon: 'request_quote' },
+    { path: '/catalog', label: 'Catálogo', icon: 'photo_library' },
     { path: '/reports', label: 'Reportes', icon: 'bar_chart' },
   ];
 }

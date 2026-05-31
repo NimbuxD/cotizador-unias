@@ -25,6 +25,11 @@ export interface Quotation {
   finalPrice?: number;
   createdAt?: string;
   updatedAt?: string;
+  appointmentTime?: string; // "HH:MM"
+  arrivedAt?: string; // ISO timestamp
+  extras?: { name: string; cost: number }[];
+  extrasCost?: number;
+  photos?: string[]; // base64 strings
 }
 
 export interface CreateQuotationDto {

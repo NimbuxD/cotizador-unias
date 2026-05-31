@@ -51,4 +51,26 @@ export class QuotationsController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.quotationsService.remove(id);
   }
+
+  @Post(':id/arrive')
+  markArrived(@Param('id', ParseIntPipe) id: number) {
+    return this.quotationsService.markArrived(id);
+  }
+
+  @Post(':id/photos')
+  addPhoto(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { photo: string },
+  ) {
+    return this.quotationsService.addPhoto(id, body.photo);
+  }
+
+  @Delete(':id/photos/:index')
+  @HttpCode(HttpStatus.OK)
+  removePhoto(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('index', ParseIntPipe) index: number,
+  ) {
+    return this.quotationsService.removePhoto(id, index);
+  }
 }

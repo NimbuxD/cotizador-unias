@@ -150,9 +150,41 @@ export class QuotationsService {
       quotation.suggestedPrice = Math.round(suggestedPrice * 100) / 100;
     }
 
-    const { services: _services, ...rest } = dto;
+    const { services: _services, arrivedAt, ...rest } = dto;
     Object.assign(quotation, rest);
 
+    if (arrivedAt !== undefined) {
+      quotation.arrivedAt = arrivedAt ? new Date(arrivedAt) : null;
+    }
+
+    await this.quotationRepository.save(quotation);
+    return this.findOne(id);
+  }
+
+  async markArrived(id: number): Promise<Quotation> {
+    const quotation = await this.findOne(id);
+    quotation.arrivedAt = new Date();
+    await this.quotationRepository.save(quotation);
+    return this.findOne(id);
+  }
+
+  async addPhoto(id: number, photo: string): Promise<Quotation> {
+    const quotation = await this.findOne(id);
+    const photos = Array.isArray(quotation.photos) ? [...quotation.photos] : [];
+    photos.push(photo);
+    quotation.photos = photos;
+    await this.quotationRepository.save(quotation);
+    return this.findOne(id);
+  }
+
+  async removePhoto(id: number, index: number): Promise<Quotation> {
+    const quotation = await this.findOne(id);
+    const photos = Array.isArray(quotation.photos) ? [...quotation.photos] : [];
+    if (index < 0 || index >= photos.length) {
+      throw new NotFoundException(`Photo at index ${index} not found`);
+    }
+    photos.splice(index, 1);
+    quotation.photos = photos;
     await this.quotationRepository.save(quotation);
     return this.findOne(id);
   }

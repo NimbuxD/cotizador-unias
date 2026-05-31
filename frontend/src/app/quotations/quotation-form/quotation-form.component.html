@@ -56,6 +56,12 @@
                     }
                   </mat-select>
                 </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Hora de cita</mat-label>
+                  <input matInput type="time" formControlName="appointmentTime">
+                  <mat-icon matPrefix>schedule</mat-icon>
+                </mat-form-field>
               </div>
 
               <mat-form-field appearance="outline" class="full-width">
@@ -122,6 +128,50 @@
                   </div>
                 }
               </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Extras -->
+        <mat-card class="extras-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>add_circle_outline</mat-icon>
+            <mat-card-title>Extras</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div [formGroup]="form">
+              <div formArrayName="extras">
+                @for (extra of extras.controls; track $index; let i = $index) {
+                  <div class="extra-row" [formGroupName]="i">
+                    <mat-form-field appearance="outline" class="extra-name">
+                      <mat-label>Descripción del extra</mat-label>
+                      <input matInput formControlName="name" placeholder="Descripción...">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="extra-cost">
+                      <mat-label>Costo</mat-label>
+                      <input matInput type="number" formControlName="cost" min="0">
+                      <span matPrefix>$</span>
+                    </mat-form-field>
+
+                    <button mat-icon-button color="warn" type="button" (click)="removeExtra(i)">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="extras-footer">
+              <button mat-stroked-button color="primary" type="button" (click)="addExtra()">
+                <mat-icon>add</mat-icon>
+                Agregar extra
+              </button>
+              @if (extras.length > 0) {
+                <span class="extras-total">
+                  Total extras: <strong>{{ extrasTotalCost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</strong>
+                </span>
+              }
             </div>
           </mat-card-content>
         </mat-card>

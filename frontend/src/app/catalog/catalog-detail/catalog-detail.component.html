@@ -1,0 +1,137 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/catalog">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-title">
+      <h1>{{ item?.title || 'Trabajo' }}</h1>
+      @if (item?.serviceName) {
+        <p><mat-icon>spa</mat-icon> {{ item!.serviceName }}</p>
+      }
+    </div>
+    @if (item) {
+      <div class="header-actions">
+        <label class="upload-btn-label">
+          <input type="file" accept="image/*" multiple (change)="onPhotoSelected($event)" hidden>
+          <button mat-stroked-button type="button"
+                  onclick="this.closest('label').querySelector('input').click()">
+            <mat-icon>add_a_photo</mat-icon>
+            Añadir fotos
+          </button>
+        </label>
+        <button mat-stroked-button [routerLink]="['/catalog', item.id, 'edit']">
+          <mat-icon>edit</mat-icon>
+          Editar
+        </button>
+        <button mat-stroked-button color="warn" (click)="deleteItem()">
+          <mat-icon>delete</mat-icon>
+          Eliminar
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (item) {
+    <div class="detail-layout">
+
+      <!-- Photo Gallery -->
+      <div class="gallery-section">
+        @if (activePhoto) {
+          <div class="main-photo-container">
+            <img [src]="activePhoto" [alt]="item.title" class="main-photo">
+            @if ((item.photos?.length ?? 0) > 1) {
+              <button mat-icon-button class="nav-btn prev-btn" (click)="prevPhoto()">
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+              <button mat-icon-button class="nav-btn next-btn" (click)="nextPhoto()">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+              <div class="photo-counter">
+                {{ activePhotoIndex + 1 }} / {{ item.photos!.length }}
+              </div>
+              <button mat-icon-button class="delete-photo-btn"
+                      (click)="removePhoto(activePhotoIndex)"
+                      matTooltip="Eliminar esta foto">
+                <mat-icon>delete</mat-icon>
+              </button>
+            } @else {
+              <button mat-icon-button class="delete-photo-btn"
+                      (click)="removePhoto(0)"
+                      matTooltip="Eliminar foto">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </div>
+
+          @if ((item.photos?.length ?? 0) > 1) {
+            <div class="thumbnails-row">
+              @for (photo of item.photos!; track $index; let i = $index) {
+                <img [src]="photo"
+                     [alt]="'Foto ' + (i + 1)"
+                     class="thumbnail"
+                     [class.active]="i === activePhotoIndex"
+                     (click)="setPhoto(i)">
+              }
+            </div>
+          }
+        } @else {
+          <div class="no-photo-placeholder">
+            <mat-icon>photo_camera</mat-icon>
+            <span>Sin fotos</span>
+          </div>
+        }
+      </div>
+
+      <!-- Info Section -->
+      <div class="info-section">
+        <mat-card>
+          <mat-card-content>
+            @if (item.tags && item.tags.length > 0) {
+              <div class="tags-section">
+                <h4>Etiquetas</h4>
+                <div class="tags-list">
+                  @for (tag of item.tags; track tag) {
+                    <mat-chip class="tag-chip">{{ tag }}</mat-chip>
+                  }
+                </div>
+              </div>
+              <mat-divider class="section-divider"></mat-divider>
+            }
+
+            @if (item.description) {
+              <div class="description-section">
+                <h4>Descripción</h4>
+                <p class="description-text">{{ item.description }}</p>
+              </div>
+              <mat-divider class="section-divider"></mat-divider>
+            }
+
+            <div class="meta-section">
+              @if (item.createdAt) {
+                <div class="meta-item">
+                  <mat-icon>calendar_today</mat-icon>
+                  <span>{{ item.createdAt | date:'dd/MM/yyyy' }}</span>
+                </div>
+              }
+              @if (item.quotationId) {
+                <div class="meta-item">
+                  <mat-icon>request_quote</mat-icon>
+                  <a [routerLink]="['/quotations', item.quotationId]">Cotización #{{ item.quotationId }}</a>
+                </div>
+              }
+              <div class="meta-item">
+                <mat-icon>photo</mat-icon>
+                <span>{{ item.photos?.length || 0 }} foto(s)</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+    </div>
+  }
+</div>

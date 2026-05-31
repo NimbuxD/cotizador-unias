@@ -12,6 +12,7 @@ import {
 import { Type } from 'class-transformer';
 import { QuotationStatus } from '../quotation.entity';
 import { QuotationServiceItemDto } from './create-quotation.dto';
+import { ExtraItem } from '../quotation.entity';
 
 export class UpdateQuotationDto {
   @IsString()
@@ -46,4 +47,25 @@ export class UpdateQuotationDto {
   @IsEnum(QuotationStatus)
   @IsOptional()
   status?: QuotationStatus;
+
+  @IsString()
+  @IsOptional()
+  appointmentTime?: string;
+
+  @IsString()
+  @IsOptional()
+  arrivedAt?: string;
+
+  @IsArray()
+  @IsOptional()
+  extras?: ExtraItem[];
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  extrasCost?: number;
+
+  @IsArray()
+  @IsOptional()
+  photos?: string[];
 }

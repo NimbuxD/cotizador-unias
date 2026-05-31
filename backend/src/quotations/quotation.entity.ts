@@ -8,6 +8,11 @@ import {
 } from 'typeorm';
 import { QuotationService } from './quotation-service.entity';
 
+export interface ExtraItem {
+  name: string;
+  cost: number;
+}
+
 export enum QuotationStatus {
   PENDING = 'pending',
   CONFIRMED = 'confirmed',
@@ -47,6 +52,21 @@ export class Quotation {
     default: QuotationStatus.PENDING,
   })
   status: QuotationStatus;
+
+  @Column({ type: 'time', nullable: true })
+  appointmentTime: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  arrivedAt: Date;
+
+  @Column({ type: 'jsonb', nullable: true, default: [] })
+  extras: ExtraItem[];
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  extrasCost: number;
+
+  @Column({ type: 'jsonb', nullable: true, default: [] })
+  photos: string[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -35,4 +35,16 @@ export class QuotationsService {
   getDashboardStats(): Observable<DashboardStats> {
     return this.http.get<DashboardStats>(`${environment.apiUrl}/api/dashboard/stats`);
   }
+
+  arrive(id: number): Observable<Quotation> {
+    return this.http.post<Quotation>(`${this.apiUrl}/${id}/arrive`, {});
+  }
+
+  addPhoto(id: number, photo: string): Observable<Quotation> {
+    return this.http.post<Quotation>(`${this.apiUrl}/${id}/photos`, { photo });
+  }
+
+  removePhoto(id: number, index: number): Observable<Quotation> {
+    return this.http.delete<Quotation>(`${this.apiUrl}/${id}/photos/${index}`);
+  }
 }

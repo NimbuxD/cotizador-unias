@@ -9,6 +9,12 @@
     </div>
     @if (quotation) {
       <div class="header-actions">
+        @if (!quotation.arrivedAt) {
+          <button mat-stroked-button color="accent" (click)="registerArrival()">
+            <mat-icon>login</mat-icon>
+            Registrar llegada
+          </button>
+        }
         <button mat-stroked-button [routerLink]="['/quotations/edit', quotation.id]">
           <mat-icon>edit</mat-icon>
           Editar
@@ -60,6 +66,18 @@
                   <span>{{ quotation.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
                 </div>
               }
+              @if (quotation.appointmentTime) {
+                <div class="detail-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>Cita a las {{ quotation.appointmentTime }}</span>
+                </div>
+              }
+              @if (quotation.arrivedAt) {
+                <div class="detail-item">
+                  <mat-icon>login</mat-icon>
+                  <span>Llegó a las {{ quotation.arrivedAt | date:'HH:mm' }}</span>
+                </div>
+              }
               @if (quotation.notes) {
                 <div class="notes">
                   <mat-icon>notes</mat-icon>
@@ -107,6 +125,84 @@
             </mat-card-content>
           </mat-card>
         }
+        <!-- Extras Section -->
+        @if (quotation.extras && quotation.extras.length > 0) {
+          <mat-card>
+            <mat-card-header>
+              <mat-icon mat-card-avatar>add_circle_outline</mat-icon>
+              <mat-card-title>Extras</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <table mat-table [dataSource]="quotation.extras" class="services-table">
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef>Descripción</th>
+                  <td mat-cell *matCellDef="let e">{{ e.name }}</td>
+                </ng-container>
+                <ng-container matColumnDef="cost">
+                  <th mat-header-cell *matHeaderCellDef>Costo</th>
+                  <td mat-cell *matCellDef="let e">
+                    <strong>{{ e.cost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</strong>
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="extrasColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: extrasColumns;"></tr>
+              </table>
+              <div class="extras-subtotal">
+                <span>Total extras:</span>
+                <strong>{{ getExtrasTotalCost() | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</strong>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+
+        <!-- Photos Section -->
+        <mat-card class="photos-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>photo_library</mat-icon>
+            <mat-card-title>Fotos</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (quotation.photos && quotation.photos.length > 0) {
+              <div class="photos-grid">
+                @for (photo of quotation.photos; track $index; let i = $index) {
+                  <div class="photo-item">
+                    <img [src]="photo" [alt]="'Foto ' + (i + 1)" class="photo-thumb">
+                    <div class="photo-overlay">
+                      <button mat-icon-button color="warn" (click)="removePhoto(i)"
+                              matTooltip="Eliminar foto">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="no-photos">
+                <mat-icon>photo_camera</mat-icon>
+                <span>No hay fotos registradas</span>
+              </div>
+            }
+
+            <div class="photos-actions">
+              <label class="upload-btn">
+                <input type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
+                <button mat-stroked-button color="primary" type="button"
+                        onclick="this.closest('label').querySelector('input').click()">
+                  <mat-icon>add_a_photo</mat-icon>
+                  Subir foto
+                </button>
+              </label>
+
+              @if (quotation.photos && quotation.photos.length > 0) {
+                <button mat-stroked-button color="accent" (click)="saveToAlbum()">
+                  <mat-icon>collections</mat-icon>
+                  Guardar en Catálogo
+                </button>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+
       </div>
 
       <!-- Cost Breakdown -->

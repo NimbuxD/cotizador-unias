@@ -93,6 +93,32 @@ mat-card {
   }
 }
 
+.extras-card {
+  .extra-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 4px;
+
+    .extra-name { flex: 1; }
+    .extra-cost { width: 140px; }
+  }
+
+  .extras-footer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+
+    .extras-total {
+      font-size: 14px;
+      color: #555;
+
+      strong { color: #7b1fa2; }
+    }
+  }
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;

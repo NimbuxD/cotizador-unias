@@ -43,6 +43,16 @@ export class QuotationFormComponent implements OnInit {
   isEdit = false;
   nailServices: NailService[] = [];
 
+  get extras(): FormArray {
+    return this.form.get('extras') as FormArray;
+  }
+
+  get extrasTotalCost(): number {
+    return this.extras.controls.reduce((sum, ctrl) => {
+      return sum + (Number(ctrl.get('cost')?.value) || 0);
+    }, 0);
+  }
+
   statusOptions = [
     { value: 'pending', label: 'Pendiente' },
     { value: 'approved', label: 'Aprobado' },
@@ -64,7 +74,9 @@ export class QuotationFormComponent implements OnInit {
       clientEmail: ['', Validators.email],
       status: ['pending', Validators.required],
       notes: [''],
-      services: this.fb.array([])
+      appointmentTime: [''],
+      services: this.fb.array([]),
+      extras: this.fb.array([])
     });
   }
 
@@ -109,6 +121,17 @@ export class QuotationFormComponent implements OnInit {
     }
   }
 
+  addExtra(name: string = '', cost: number = 0): void {
+    this.extras.push(this.fb.group({
+      name: [name],
+      cost: [cost, [Validators.min(0)]]
+    }));
+  }
+
+  removeExtra(index: number): void {
+    this.extras.removeAt(index);
+  }
+
   loadQuotation(): void {
     this.loading = true;
     this.quotationsService.getById(this.editId!).subscribe({
@@ -118,10 +141,14 @@ export class QuotationFormComponent implements OnInit {
           clientPhone: q.clientPhone,
           clientEmail: q.clientEmail,
           status: q.status,
-          notes: q.notes
+          notes: q.notes,
+          appointmentTime: q.appointmentTime || ''
         });
         if (q.services) {
           q.services.forEach(s => this.addService(s.serviceId, s.quantity, s.unitPrice));
+        }
+        if (q.extras) {
+          q.extras.forEach(e => this.addExtra(e.name, e.cost));
         }
         this.loading = false;
       },
