@@ -68,8 +68,7 @@ export class QuotationDetailComponent implements OnInit {
   }
 
   getTotalCost(): number {
-    if (!this.quotation?.services) return 0;
-    return this.quotation.services.reduce((sum, s) => sum + ((s.unitPrice ?? 0) * s.quantity), 0);
+    return Number(this.quotation?.finalPrice) || Number(this.quotation?.totalMaterialCost) || 0;
   }
 
   deleteQuotation(): void {

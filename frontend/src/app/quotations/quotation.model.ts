@@ -8,6 +8,7 @@ export interface QuotationService {
   unitPrice?: number;
   materialCost?: number;
   subtotal?: number;
+  service?: { id: number; name: string; basePrice?: number };
 }
 
 export interface Quotation {
