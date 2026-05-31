@@ -62,3 +62,28 @@ html, body {
 ::-webkit-scrollbar-track { background: #f1f1f1; }
 ::-webkit-scrollbar-thumb { background: #c8a0d6; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #9c27b0; }
+
+// Responsive: tables scroll horizontally on small screens
+.table-wrapper,
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// Responsive overrides for mobile
+@media (max-width: 768px) {
+  .mat-mdc-card { margin: 8px !important; }
+  .page-container { padding: 8px !important; }
+  mat-form-field { width: 100% !important; }
+
+  // Stack page headers on mobile
+  .page-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+
+    button[mat-raised-button] {
+      width: 100%;
+    }
+  }
+}

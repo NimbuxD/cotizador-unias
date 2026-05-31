@@ -110,6 +110,13 @@
                         matTooltip="Editar">
                   <mat-icon>edit</mat-icon>
                 </button>
+                @if (q.status !== 'completed') {
+                  <button mat-icon-button color="accent"
+                          (click)="markAsCompleted(q)"
+                          matTooltip="Marcar como completado">
+                    <mat-icon>check_circle</mat-icon>
+                  </button>
+                }
                 <button mat-icon-button color="warn"
                         (click)="deleteQuotation(q)"
                         matTooltip="Eliminar">

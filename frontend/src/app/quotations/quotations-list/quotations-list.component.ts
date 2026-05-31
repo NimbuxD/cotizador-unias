@@ -102,6 +102,18 @@ export class QuotationsListComponent implements OnInit {
     return labels[status] || status;
   }
 
+  markAsCompleted(q: Quotation): void {
+    this.quotationsService.update(q.id, { status: 'completed' }).subscribe({
+      next: () => {
+        this.snackBar.open('Cotización marcada como completada', 'Cerrar', { duration: 3000 });
+        this.loadQuotations();
+      },
+      error: () => {
+        this.snackBar.open('Error al actualizar la cotización', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
   deleteQuotation(q: Quotation): void {
     if (confirm(`¿Eliminar la cotización de "${q.clientName}"?`)) {
       this.quotationsService.delete(q.id).subscribe({

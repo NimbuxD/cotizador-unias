@@ -12,6 +12,7 @@ export enum QuotationStatus {
   PENDING = 'pending',
   CONFIRMED = 'confirmed',
   CANCELLED = 'cancelled',
+  COMPLETED = 'completed',
 }
 
 @Entity('quotations')

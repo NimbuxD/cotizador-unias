@@ -1,20 +1,26 @@
-<div class="nav-header">
+<div class="nav-header" [class.narrow]="narrow">
   <div class="nav-logo">
     <mat-icon class="logo-icon">spa</mat-icon>
-    <span class="logo-text">Cotizador Uñas</span>
+    @if (!narrow) {
+      <span class="logo-text">Cotizador Uñas</span>
+    }
   </div>
 </div>
 
 <mat-divider></mat-divider>
 
-<mat-nav-list>
+<mat-nav-list [class.narrow]="narrow">
   @for (item of navItems; track item.path) {
     <a mat-list-item
        [routerLink]="item.path"
        routerLinkActive="active-link"
-       [routerLinkActiveOptions]="{exact: item.path === '/dashboard'}">
+       [routerLinkActiveOptions]="{exact: item.path === '/dashboard'}"
+       [matTooltip]="narrow ? item.label : ''"
+       matTooltipPosition="right">
       <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-      <span matListItemTitle>{{ item.label }}</span>
+      @if (!narrow) {
+        <span matListItemTitle>{{ item.label }}</span>
+      }
     </a>
   }
 </mat-nav-list>

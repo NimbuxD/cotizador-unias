@@ -46,5 +46,9 @@ export const routes: Routes = [
     path: 'quotations/:id',
     loadComponent: () => import('./quotations/quotation-detail/quotation-detail.component').then(m => m.QuotationDetailComponent)
   },
+  {
+    path: 'reports',
+    loadComponent: () => import('./reports/reports.component').then(m => m.ReportsComponent)
+  },
   { path: '**', redirectTo: '/dashboard' }
 ];

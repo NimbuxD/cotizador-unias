@@ -1,11 +1,15 @@
 <mat-sidenav-container class="app-container">
-  <mat-sidenav #sidenav [mode]="'side'" [opened]="sidenavOpened" class="app-sidenav">
-    <app-navigation></app-navigation>
+  <mat-sidenav #sidenav
+               [mode]="sidenavMode"
+               [opened]="sidenavOpened"
+               [class.narrow-sidenav]="isTablet"
+               class="app-sidenav">
+    <app-navigation [narrow]="isTablet"></app-navigation>
   </mat-sidenav>
 
   <mat-sidenav-content class="app-content">
     <mat-toolbar class="app-toolbar">
-      <button mat-icon-button (click)="sidenav.toggle()">
+      <button mat-icon-button (click)="toggleSidenav()" class="menu-button">
         <mat-icon>menu</mat-icon>
       </button>
       <span class="toolbar-title">{{ title }}</span>

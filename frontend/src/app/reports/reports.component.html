@@ -1,0 +1,206 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <h1>Reportes</h1>
+      <p>Resumen financiero de cotizaciones completadas</p>
+    </div>
+    @if (summary) {
+      <button mat-raised-button color="primary" (click)="exportToExcel()">
+        <mat-icon>download</mat-icon>
+        Exportar a Excel
+      </button>
+    }
+  </div>
+
+  <!-- Date Range Filter -->
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <div class="filter-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Desde</mat-label>
+          <input matInput type="date" [(ngModel)]="fromDate">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Hasta</mat-label>
+          <input matInput type="date" [(ngModel)]="toDate">
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="loadReport()" [disabled]="loading">
+          <mat-icon>search</mat-icon>
+          Generar Reporte
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  }
+
+  @if (summary && !loading) {
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+      <mat-card class="summary-card completed-card">
+        <mat-card-content>
+          <div class="card-content">
+            <div class="card-info">
+              <span class="card-number">{{ summary.totals.completedCount }}</span>
+              <span class="card-label">Total Completados</span>
+            </div>
+            <mat-icon class="card-icon">check_circle</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="summary-card revenue-card">
+        <mat-card-content>
+          <div class="card-content">
+            <div class="card-info">
+              <span class="card-number">{{ summary.totals.totalRevenue | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
+              <span class="card-label">Ingresos Totales</span>
+            </div>
+            <mat-icon class="card-icon">attach_money</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="summary-card cost-card">
+        <mat-card-content>
+          <div class="card-content">
+            <div class="card-info">
+              <span class="card-number">{{ summary.totals.totalMaterialCost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
+              <span class="card-label">Costo Materiales</span>
+            </div>
+            <mat-icon class="card-icon">shopping_cart</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="summary-card profit-card">
+        <mat-card-content>
+          <div class="card-content">
+            <div class="card-info">
+              <span class="card-number">{{ summary.totals.totalProfit | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
+              <span class="card-label">Ganancia</span>
+            </div>
+            <mat-icon class="card-icon">trending_up</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="summary-card margin-card">
+        <mat-card-content>
+          <div class="card-content">
+            <div class="card-info">
+              <span class="card-number">{{ summary.totals.profitMargin | number:'1.1-1' }}%</span>
+              <span class="card-label">Margen %</span>
+            </div>
+            <mat-icon class="card-icon">percent</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- By Service Table -->
+    <mat-card class="table-card">
+      <mat-card-header>
+        <mat-card-title>Por Servicio</mat-card-title>
+        <mat-card-subtitle>Resumen de ingresos agrupado por tipo de servicio</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="table-wrapper">
+          <table mat-table [dataSource]="summary.byService" class="report-table">
+
+            <ng-container matColumnDef="serviceName">
+              <th mat-header-cell *matHeaderCellDef>Servicio</th>
+              <td mat-cell *matCellDef="let row">{{ row.serviceName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="count">
+              <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+              <td mat-cell *matCellDef="let row">{{ row.count }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="revenue">
+              <th mat-header-cell *matHeaderCellDef>Ingresos</th>
+              <td mat-cell *matCellDef="let row">{{ row.revenue | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="materialCost">
+              <th mat-header-cell *matHeaderCellDef>Costo</th>
+              <td mat-cell *matCellDef="let row">{{ row.materialCost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="profit">
+              <th mat-header-cell *matHeaderCellDef>Ganancia</th>
+              <td mat-cell *matCellDef="let row" class="profit-cell">{{ row.profit | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="byServiceColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: byServiceColumns;"></tr>
+
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell no-data-cell" colspan="5">No hay datos para el período seleccionado</td>
+            </tr>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Detail Table -->
+    <mat-card class="table-card">
+      <mat-card-header>
+        <mat-card-title>Detalle de Servicios Completados</mat-card-title>
+        <mat-card-subtitle>Listado completo de cotizaciones completadas en el período</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="table-wrapper">
+          <table mat-table [dataSource]="summary.quotations" class="report-table">
+
+            <ng-container matColumnDef="clientName">
+              <th mat-header-cell *matHeaderCellDef>Cliente</th>
+              <td mat-cell *matCellDef="let row"><strong>{{ row.clientName }}</strong></td>
+            </ng-container>
+
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Fecha</th>
+              <td mat-cell *matCellDef="let row">{{ row.date | date:'dd/MM/yyyy' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="services">
+              <th mat-header-cell *matHeaderCellDef>Servicios</th>
+              <td mat-cell *matCellDef="let row">
+                <span class="services-list">{{ row.services.join(', ') }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="totalMaterialCost">
+              <th mat-header-cell *matHeaderCellDef>Costo Material</th>
+              <td mat-cell *matCellDef="let row">{{ row.totalMaterialCost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="finalPrice">
+              <th mat-header-cell *matHeaderCellDef>Precio Final</th>
+              <td mat-cell *matCellDef="let row"><strong>{{ row.finalPrice | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</strong></td>
+            </ng-container>
+
+            <ng-container matColumnDef="profit">
+              <th mat-header-cell *matHeaderCellDef>Ganancia</th>
+              <td mat-cell *matCellDef="let row" class="profit-cell">{{ row.profit | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="detailColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: detailColumns;"></tr>
+
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell no-data-cell" colspan="6">No hay cotizaciones completadas en el período seleccionado</td>
+            </tr>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

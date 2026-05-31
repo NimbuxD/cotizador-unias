@@ -1,0 +1,181 @@
+.page-container {
+  padding: 24px;
+  max-width: 1200px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  .header-left {
+    h1 { margin: 0; font-size: 28px; font-weight: 600; color: #333; }
+    p { margin: 4px 0 0; color: #666; font-size: 14px; }
+  }
+}
+
+.filter-card {
+  margin-bottom: 24px;
+
+  .filter-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+
+    mat-form-field {
+      min-width: 160px;
+      flex: 1;
+    }
+
+    button {
+      margin-top: 4px;
+      white-space: nowrap;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 60px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .summary-card {
+    .card-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+
+      .card-info {
+        display: flex;
+        flex-direction: column;
+
+        .card-number {
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 1.2;
+        }
+
+        .card-label {
+          font-size: 12px;
+          margin-top: 4px;
+          opacity: 0.85;
+        }
+      }
+
+      .card-icon {
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+        opacity: 0.3;
+      }
+    }
+
+    &.completed-card {
+      background: linear-gradient(135deg, #1565c0, #1976d2);
+      color: white;
+    }
+
+    &.revenue-card {
+      background: linear-gradient(135deg, #2e7d32, #388e3c);
+      color: white;
+    }
+
+    &.cost-card {
+      background: linear-gradient(135deg, #f57c00, #ff9800);
+      color: white;
+    }
+
+    &.profit-card {
+      background: linear-gradient(135deg, #7b1fa2, #9c27b0);
+      color: white;
+    }
+
+    &.margin-card {
+      background: linear-gradient(135deg, #e91e8c, #f06292);
+      color: white;
+    }
+  }
+}
+
+.table-card {
+  margin-bottom: 24px;
+
+  mat-card-header {
+    margin-bottom: 16px;
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.report-table {
+  width: 100%;
+  min-width: 600px;
+
+  th.mat-header-cell {
+    font-weight: 600;
+    color: #555;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  td.mat-cell {
+    font-size: 14px;
+  }
+
+  tr.mat-row:hover {
+    background-color: #fafafa;
+  }
+
+  .profit-cell {
+    color: #2e7d32;
+    font-weight: 600;
+  }
+
+  .services-list {
+    color: #7b1fa2;
+    font-size: 13px;
+  }
+
+  .no-data-cell {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 8px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .filter-card .filter-row {
+    flex-direction: column;
+
+    mat-form-field, button {
+      width: 100%;
+    }
+  }
+}

@@ -3,6 +3,12 @@
   background: linear-gradient(135deg, #7b1fa2, #e91e8c);
   color: white;
 
+  &.narrow {
+    padding: 16px 8px;
+    display: flex;
+    justify-content: center;
+  }
+
   .nav-logo {
     display: flex;
     align-items: center;
@@ -24,6 +30,22 @@
 
 mat-nav-list {
   padding-top: 8px;
+
+  &.narrow {
+    a[mat-list-item] {
+      border-radius: 50%;
+      margin: 4px auto;
+      width: 48px;
+      min-height: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      mat-icon {
+        margin: 0;
+      }
+    }
+  }
 
   a[mat-list-item] {
     border-radius: 0 24px 24px 0;

@@ -9,6 +9,11 @@
 .app-sidenav {
   width: 240px;
   border-right: 1px solid #e8e0ed;
+  transition: width 0.3s ease;
+
+  &.narrow-sidenav {
+    width: 64px;
+  }
 }
 
 .app-toolbar {
