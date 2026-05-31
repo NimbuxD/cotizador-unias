@@ -120,7 +120,7 @@
             <h4>Costos Reales</h4>
             <div class="cost-row">
               <span>Mano de obra</span>
-              <span>{{ (quotation.totalLaborCost || 0) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
+              <span>{{ 0 | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
             </div>
             <div class="cost-row">
               <span>Materiales</span>
@@ -129,7 +129,7 @@
             <mat-divider></mat-divider>
             <div class="cost-row subtotal">
               <span>Costo Real</span>
-              <span>{{ ((quotation.totalLaborCost || 0) + (quotation.totalMaterialCost || 0)) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
+              <span>{{ (quotation.totalMaterialCost || 0) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
             </div>
           </div>
 
@@ -145,14 +145,14 @@
           @if (getTotalCost() > 0) {
             <mat-divider class="section-divider"></mat-divider>
             <div class="margin-info"
-                 [class.positive]="getTotalCost() > ((quotation.totalLaborCost || 0) + (quotation.totalMaterialCost || 0))">
+                 [class.positive]="getTotalCost() > (quotation.totalMaterialCost || 0)">
               <div class="margin-row">
                 <mat-icon>
-                  {{ getTotalCost() > ((quotation.totalLaborCost || 0) + (quotation.totalMaterialCost || 0)) ? 'trending_up' : 'trending_down' }}
+                  {{ getTotalCost() > (quotation.totalMaterialCost || 0) ? 'trending_up' : 'trending_down' }}
                 </mat-icon>
                 <span>Margen</span>
                 <span class="margin-value">
-                  {{ (getTotalCost() - (quotation.totalLaborCost || 0) - (quotation.totalMaterialCost || 0)) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}
+                  {{ (getTotalCost() - (quotation.totalMaterialCost || 0)) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}
                 </span>
               </div>
             </div>

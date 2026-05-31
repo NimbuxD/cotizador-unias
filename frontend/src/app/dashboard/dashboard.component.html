@@ -136,7 +136,7 @@
                   <span>{{ q.clientName }}</span>
                 </div>
                 <div class="quote-info">
-                  <span class="total">{{ q.totalCost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
+                  <span class="total">{{ (q.finalPrice ?? q.totalMaterialCost ?? 0) | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
                   <span class="status-badge" [ngClass]="'status-' + q.status">
                     {{ getStatusLabel(q.status) }}
                   </span>

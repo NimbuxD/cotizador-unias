@@ -1,13 +1,12 @@
-export type QuotationStatus = 'pending' | 'approved' | 'rejected' | 'completed';
+export type QuotationStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
 
 export interface QuotationService {
   id?: number;
   serviceId: number;
   serviceName?: string;
   quantity: number;
-  unitPrice: number;
+  unitPrice?: number;
   materialCost?: number;
-  laborCost?: number;
   subtotal?: number;
 }
 
@@ -18,10 +17,11 @@ export interface Quotation {
   clientEmail?: string;
   status: QuotationStatus;
   notes?: string;
+  date?: string;
   services?: QuotationService[];
   totalMaterialCost?: number;
-  totalLaborCost?: number;
-  totalCost?: number;
+  suggestedPrice?: number;
+  finalPrice?: number;
   createdAt?: string;
   updatedAt?: string;
 }
