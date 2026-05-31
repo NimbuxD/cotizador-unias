@@ -3,12 +3,17 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Index,
 } from 'typeorm';
 
 @Entity('catalog_items')
+@Index(['userId'])
 export class CatalogItem {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ nullable: true, length: 128 })
+  userId: string;
 
   @Column()
   title: string;

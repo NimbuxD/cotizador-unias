@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { QuotationService } from './quotation-service.entity';
 
@@ -21,9 +22,13 @@ export enum QuotationStatus {
 }
 
 @Entity('quotations')
+@Index(['userId'])
 export class Quotation {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ nullable: true, length: 128 })
+  userId: string;
 
   @Column({ length: 200 })
   clientName: string;

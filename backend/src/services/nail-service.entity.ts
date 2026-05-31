@@ -4,13 +4,18 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { ServiceMaterial } from './service-material.entity';
 
 @Entity('nail_services')
+@Index(['userId'])
 export class NailService {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ nullable: true, length: 128 })
+  userId: string;
 
   @Column({ length: 200 })
   name: string;

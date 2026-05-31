@@ -6,6 +6,7 @@ import { QuotationsModule } from './quotations/quotations.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ReportsModule } from './reports/reports.module';
 import { CatalogModule } from './catalog/catalog.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CatalogModule } from './catalog/catalog.module';
         ? false
         : { rejectUnauthorized: false },
     }),
+    AuthModule,
     ProductsModule,
     ServicesModule,
     QuotationsModule,

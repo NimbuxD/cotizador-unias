@@ -15,44 +15,50 @@ export class ProductService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  async create(dto: CreateProductDto): Promise<Product> {
-    const product = this.productRepository.create(dto);
+  async create(dto: CreateProductDto, userId: string): Promise<Product> {
+    const product = this.productRepository.create({ ...dto, userId });
     return this.productRepository.save(product);
   }
 
-  async findAll(): Promise<Product[]> {
-    return this.productRepository.find({ order: { name: 'ASC' } });
+  async findAll(userId: string): Promise<Product[]> {
+    return this.productRepository.find({
+      where: { userId },
+      order: { name: 'ASC' },
+    });
   }
 
-  async findOne(id: number): Promise<Product> {
-    const product = await this.productRepository.findOne({ where: { id } });
+  async findOne(id: number, userId: string): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { id, userId },
+    });
     if (!product) {
       throw new NotFoundException(`Product #${id} not found`);
     }
     return product;
   }
 
-  async update(id: number, dto: UpdateProductDto): Promise<Product> {
-    const product = await this.findOne(id);
+  async update(id: number, dto: UpdateProductDto, userId: string): Promise<Product> {
+    const product = await this.findOne(id, userId);
     Object.assign(product, dto);
     return this.productRepository.save(product);
   }
 
-  async remove(id: number): Promise<void> {
-    const product = await this.findOne(id);
+  async remove(id: number, userId: string): Promise<void> {
+    const product = await this.findOne(id, userId);
     await this.productRepository.remove(product);
   }
 
-  async findLowStock(): Promise<Product[]> {
+  async findLowStock(userId: string): Promise<Product[]> {
     return this.productRepository
       .createQueryBuilder('product')
       .where('product.currentStock <= product.minStock')
       .andWhere('product.minStock > 0')
+      .andWhere('product.userId = :userId', { userId })
       .orderBy('product.name', 'ASC')
       .getMany();
   }
 
-  async getTotalCount(): Promise<number> {
-    return this.productRepository.count();
+  async getTotalCount(userId: string): Promise<number> {
+    return this.productRepository.count({ where: { userId } });
   }
 }

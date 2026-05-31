@@ -1,23 +1,27 @@
-<mat-sidenav-container class="app-container">
-  <mat-sidenav #sidenav
-               [mode]="sidenavMode"
-               [opened]="sidenavOpened"
-               [class.narrow-sidenav]="isTablet"
-               class="app-sidenav">
-    <app-navigation [narrow]="isTablet"></app-navigation>
-  </mat-sidenav>
+@if (showAppLayout) {
+  <mat-sidenav-container class="app-container">
+    <mat-sidenav #sidenav
+                 [mode]="sidenavMode"
+                 [opened]="sidenavOpened"
+                 [class.narrow-sidenav]="isTablet"
+                 class="app-sidenav">
+      <app-navigation [narrow]="isTablet"></app-navigation>
+    </mat-sidenav>
 
-  <mat-sidenav-content class="app-content">
-    <mat-toolbar class="app-toolbar">
-      <button mat-icon-button (click)="toggleSidenav()" class="menu-button">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span class="toolbar-title">{{ title }}</span>
-      <span class="toolbar-spacer"></span>
-    </mat-toolbar>
+    <mat-sidenav-content class="app-content">
+      <mat-toolbar class="app-toolbar">
+        <button mat-icon-button (click)="toggleSidenav()" class="menu-button">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span class="toolbar-title">{{ title }}</span>
+        <span class="toolbar-spacer"></span>
+      </mat-toolbar>
 
-    <main class="main-content">
-      <router-outlet></router-outlet>
-    </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+      <main class="main-content">
+        <router-outlet></router-outlet>
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+} @else {
+  <router-outlet></router-outlet>
+}

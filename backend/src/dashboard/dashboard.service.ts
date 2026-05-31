@@ -9,11 +9,11 @@ export class DashboardService {
     private readonly quotationsService: QuotationsService,
   ) {}
 
-  async getSummary() {
+  async getSummary(userId: string) {
     const [totalProducts, lowStockProducts, quotationStats] = await Promise.all([
-      this.productService.getTotalCount(),
-      this.productService.findLowStock(),
-      this.quotationsService.getStats(),
+      this.productService.getTotalCount(userId),
+      this.productService.findLowStock(userId),
+      this.quotationsService.getStats(userId),
     ]);
 
     return {

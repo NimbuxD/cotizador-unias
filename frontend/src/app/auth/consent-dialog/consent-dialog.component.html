@@ -1,0 +1,65 @@
+<h2 mat-dialog-title>
+  <mat-icon style="vertical-align: middle; margin-right: 8px; color: #7b1fa2">privacy_tip</mat-icon>
+  Permisos y datos que usamos
+</h2>
+
+<mat-dialog-content>
+  <p class="intro-text">
+    Para brindarte la mejor experiencia, necesitamos tu consentimiento para guardar la siguiente información:
+  </p>
+
+  <div class="permission-list">
+    <div class="permission-item">
+      <mat-icon class="perm-icon">person</mat-icon>
+      <div>
+        <strong>Nombre y foto de perfil de Google</strong>
+        <p>Para personalizar tu experiencia en la app.</p>
+      </div>
+    </div>
+    <div class="permission-item">
+      <mat-icon class="perm-icon">email</mat-icon>
+      <div>
+        <strong>Correo electrónico</strong>
+        <p>Como identificador único de tu cuenta.</p>
+      </div>
+    </div>
+    <div class="permission-item">
+      <mat-icon class="perm-icon">inventory_2</mat-icon>
+      <div>
+        <strong>Tus productos y servicios</strong>
+        <p>Los productos, servicios y precios que ingreses en la app.</p>
+      </div>
+    </div>
+    <div class="permission-item">
+      <mat-icon class="perm-icon">request_quote</mat-icon>
+      <div>
+        <strong>Tus cotizaciones y clientes</strong>
+        <p>Las cotizaciones que crees, incluyendo nombres de clientes y montos.</p>
+      </div>
+    </div>
+    <div class="permission-item">
+      <mat-icon class="perm-icon">photo_library</mat-icon>
+      <div>
+        <strong>Fotos del catálogo</strong>
+        <p>Las imágenes que subas a tu catálogo de trabajos.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="data-note">
+    <mat-icon>security</mat-icon>
+    <p>
+      Tus datos se almacenan de forma segura y solo son visibles para ti.
+      No compartimos tu información con terceros.
+      Puedes ver nuestra <a routerLink="/privacy-policy" (click)="decline()">Política de Privacidad</a> completa.
+    </p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="decline()" color="warn">No acepto</button>
+  <button mat-raised-button (click)="accept()" color="primary">
+    <mat-icon>check</mat-icon>
+    Acepto y continuar
+  </button>
+</mat-dialog-actions>

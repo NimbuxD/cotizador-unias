@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { ServiceMaterial } from '../services/service-material.entity';
 
@@ -26,9 +27,13 @@ export enum ProductUnit {
 }
 
 @Entity('products')
+@Index(['userId'])
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ nullable: true, length: 128 })
+  userId: string;
 
   @Column({ length: 200 })
   name: string;

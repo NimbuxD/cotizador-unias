@@ -1,0 +1,51 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo-section">
+        <span class="logo-icon">💅</span>
+        <h1 class="app-title">Cotizador de Uñas</h1>
+        <p class="app-subtitle">Gestiona tus servicios y cotizaciones</p>
+      </div>
+    </div>
+
+    <div class="login-body">
+      <h2 class="welcome-title">Bienvenida</h2>
+      <p class="welcome-desc">
+        Inicia sesión con tu cuenta de Google para acceder a tu información de forma segura.
+        Cada usuaria tiene sus propios datos, servicios y cotizaciones.
+      </p>
+
+      @if (error) {
+        <div class="error-message">
+          <span class="material-icons">error_outline</span>
+          {{ error }}
+        </div>
+      }
+
+      <button
+        mat-raised-button
+        class="google-btn"
+        [disabled]="loading"
+        (click)="signInWithGoogle()"
+      >
+        @if (loading) {
+          <mat-spinner diameter="20"></mat-spinner>
+          <span>Iniciando sesión...</span>
+        } @else {
+          <img src="assets/google-logo.svg" alt="Google" class="google-icon" />
+          <span>Continuar con Google</span>
+        }
+      </button>
+
+      <div class="privacy-note">
+        Al iniciar sesión, aceptas nuestra
+        <a routerLink="/privacy-policy" class="privacy-link">Política de Privacidad</a>
+        y el uso de tus datos para personalizar tu experiencia.
+      </div>
+    </div>
+
+    <div class="login-footer">
+      <p>Tus datos están seguros y solo tú puedes verlos.</p>
+    </div>
+  </div>
+</div>

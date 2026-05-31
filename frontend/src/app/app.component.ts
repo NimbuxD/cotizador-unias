@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -7,6 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { NavigationComponent } from './shared/navigation/navigation.component';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
+
+const AUTH_ROUTES = ['/login', '/privacy-policy'];
 
 @Component({
   selector: 'app-root',
@@ -17,10 +20,10 @@ import { Subscription } from 'rxjs';
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-    NavigationComponent
+    NavigationComponent,
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'Cotizador de Uñas';
@@ -28,36 +31,53 @@ export class AppComponent implements OnInit, OnDestroy {
   isTablet = false;
   sidenavOpened = true;
   sidenavMode: 'side' | 'over' = 'side';
+  showAppLayout = false;
 
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
-  private breakpointSub!: Subscription;
+  private subs: Subscription[] = [];
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
-    this.breakpointSub = this.breakpointObserver.observe([
-      '(max-width: 767px)',
-      '(min-width: 768px) and (max-width: 1024px)'
-    ]).subscribe(result => {
-      const breakpoints = result.breakpoints;
-      this.isMobile = breakpoints['(max-width: 767px)'];
-      this.isTablet = breakpoints['(min-width: 768px) and (max-width: 1024px)'];
+    this.checkRoute(this.router.url);
 
-      if (this.isMobile) {
-        this.sidenavMode = 'over';
-        this.sidenavOpened = false;
-      } else {
-        this.sidenavMode = 'side';
-        this.sidenavOpened = true;
-      }
-    });
+    this.subs.push(
+      this.router.events
+        .pipe(filter((e) => e instanceof NavigationEnd))
+        .subscribe((e) => {
+          this.checkRoute((e as NavigationEnd).url);
+        }),
+    );
+
+    this.subs.push(
+      this.breakpointObserver
+        .observe(['(max-width: 767px)', '(min-width: 768px) and (max-width: 1024px)'])
+        .subscribe((result) => {
+          const bp = result.breakpoints;
+          this.isMobile = bp['(max-width: 767px)'];
+          this.isTablet = bp['(min-width: 768px) and (max-width: 1024px)'];
+          if (this.isMobile) {
+            this.sidenavMode = 'over';
+            this.sidenavOpened = false;
+          } else {
+            this.sidenavMode = 'side';
+            this.sidenavOpened = true;
+          }
+        }),
+    );
   }
 
   ngOnDestroy(): void {
-    if (this.breakpointSub) {
-      this.breakpointSub.unsubscribe();
-    }
+    this.subs.forEach((s) => s.unsubscribe());
+  }
+
+  private checkRoute(url: string): void {
+    const path = url.split('?')[0];
+    this.showAppLayout = !AUTH_ROUTES.some((r) => path.startsWith(r));
   }
 
   toggleSidenav(): void {

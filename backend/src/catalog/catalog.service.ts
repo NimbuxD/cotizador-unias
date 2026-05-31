@@ -12,8 +12,9 @@ export class CatalogService {
     private readonly catalogRepository: Repository<CatalogItem>,
   ) {}
 
-  async findAll(withPhotos = false): Promise<Partial<CatalogItem>[]> {
+  async findAll(withPhotos = false, userId: string): Promise<Partial<CatalogItem>[]> {
     const items = await this.catalogRepository.find({
+      where: { userId },
       order: { createdAt: 'DESC' },
     });
 
@@ -23,46 +24,47 @@ export class CatalogService {
     return items;
   }
 
-  async findOne(id: number): Promise<CatalogItem> {
-    const item = await this.catalogRepository.findOne({ where: { id } });
+  async findOne(id: number, userId: string): Promise<CatalogItem> {
+    const item = await this.catalogRepository.findOne({ where: { id, userId } });
     if (!item) {
       throw new NotFoundException(`CatalogItem #${id} not found`);
     }
     return item;
   }
 
-  async create(dto: CreateCatalogItemDto): Promise<CatalogItem> {
+  async create(dto: CreateCatalogItemDto, userId: string): Promise<CatalogItem> {
     const item = this.catalogRepository.create({
       ...dto,
+      userId,
       tags: dto.tags ?? [],
       photos: dto.photos ?? [],
     });
     return this.catalogRepository.save(item);
   }
 
-  async update(id: number, dto: UpdateCatalogItemDto): Promise<CatalogItem> {
-    const item = await this.findOne(id);
+  async update(id: number, dto: UpdateCatalogItemDto, userId: string): Promise<CatalogItem> {
+    const item = await this.findOne(id, userId);
     Object.assign(item, dto);
     await this.catalogRepository.save(item);
-    return this.findOne(id);
+    return this.findOne(id, userId);
   }
 
-  async remove(id: number): Promise<void> {
-    const item = await this.findOne(id);
+  async remove(id: number, userId: string): Promise<void> {
+    const item = await this.findOne(id, userId);
     await this.catalogRepository.remove(item);
   }
 
-  async addPhoto(id: number, photo: string): Promise<CatalogItem> {
-    const item = await this.findOne(id);
+  async addPhoto(id: number, photo: string, userId: string): Promise<CatalogItem> {
+    const item = await this.findOne(id, userId);
     const photos = Array.isArray(item.photos) ? [...item.photos] : [];
     photos.push(photo);
     item.photos = photos;
     await this.catalogRepository.save(item);
-    return this.findOne(id);
+    return this.findOne(id, userId);
   }
 
-  async removePhoto(id: number, index: number): Promise<CatalogItem> {
-    const item = await this.findOne(id);
+  async removePhoto(id: number, index: number, userId: string): Promise<CatalogItem> {
+    const item = await this.findOne(id, userId);
     const photos = Array.isArray(item.photos) ? [...item.photos] : [];
     if (index < 0 || index >= photos.length) {
       throw new NotFoundException(`Photo at index ${index} not found`);
@@ -70,6 +72,6 @@ export class CatalogService {
     photos.splice(index, 1);
     item.photos = photos;
     await this.catalogRepository.save(item);
-    return this.findOne(id);
+    return this.findOne(id, userId);
   }
 }

@@ -24,3 +24,44 @@
     </a>
   }
 </mat-nav-list>
+
+<div class="nav-spacer"></div>
+
+<mat-divider></mat-divider>
+
+@if (currentUser) {
+  <div class="user-section" [class.narrow]="narrow">
+    @if (currentUser.photoURL) {
+      <img
+        [src]="currentUser.photoURL"
+        [alt]="getDisplayName()"
+        class="user-avatar"
+        [matTooltip]="narrow ? getDisplayName() : ''"
+        matTooltipPosition="right"
+      />
+    } @else {
+      <div
+        class="user-avatar-placeholder"
+        [matTooltip]="narrow ? getDisplayName() : ''"
+        matTooltipPosition="right"
+      >
+        <mat-icon>account_circle</mat-icon>
+      </div>
+    }
+    @if (!narrow) {
+      <div class="user-info">
+        <span class="user-name">{{ getDisplayName() }}</span>
+        <span class="user-email">{{ currentUser.email }}</span>
+      </div>
+    }
+    <button
+      mat-icon-button
+      class="logout-btn"
+      (click)="logout()"
+      [matTooltip]="'Cerrar sesión'"
+      matTooltipPosition="right"
+    >
+      <mat-icon>logout</mat-icon>
+    </button>
+  </div>
+}

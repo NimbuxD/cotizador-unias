@@ -20,8 +20,7 @@ export class QuotationsService {
     private readonly servicesService: ServicesService,
   ) {}
 
-  async create(dto: CreateQuotationDto): Promise<Quotation> {
-    // Calculate costs for each service
+  async create(dto: CreateQuotationDto, userId: string): Promise<Quotation> {
     let totalMaterialCost = 0;
     let suggestedPrice = 0;
 
@@ -33,9 +32,7 @@ export class QuotationsService {
 
     for (const item of dto.services) {
       const qty = item.quantity ?? 1;
-      const costBreakdown = await this.servicesService.calculateCost(
-        item.serviceId,
-      );
+      const costBreakdown = await this.servicesService.calculateCost(item.serviceId, userId);
       const materialCost =
         Math.round(costBreakdown.totalMaterialCost * qty * 100) / 100;
       const basePrice = Math.round(costBreakdown.basePrice * qty * 100) / 100;
@@ -43,17 +40,14 @@ export class QuotationsService {
       totalMaterialCost += materialCost;
       suggestedPrice += basePrice;
 
-      serviceItems.push({
-        serviceId: item.serviceId,
-        quantity: qty,
-        materialCost,
-      });
+      serviceItems.push({ serviceId: item.serviceId, quantity: qty, materialCost });
     }
 
     totalMaterialCost = Math.round(totalMaterialCost * 100) / 100;
     suggestedPrice = Math.round(suggestedPrice * 100) / 100;
 
     const quotation = this.quotationRepository.create({
+      userId,
       clientName: dto.clientName,
       clientPhone: dto.clientPhone,
       date: dto.date,
@@ -66,7 +60,6 @@ export class QuotationsService {
 
     const saved = await this.quotationRepository.save(quotation);
 
-    // Create quotation service links
     for (const item of serviceItems) {
       const qs = this.quotationServiceRepository.create({
         quotationId: saved.id,
@@ -77,19 +70,20 @@ export class QuotationsService {
       await this.quotationServiceRepository.save(qs);
     }
 
-    return this.findOne(saved.id);
+    return this.findOne(saved.id, userId);
   }
 
-  async findAll(): Promise<Quotation[]> {
+  async findAll(userId: string): Promise<Quotation[]> {
     return this.quotationRepository.find({
+      where: { userId },
       relations: { services: { service: true } },
       order: { createdAt: 'DESC' },
     });
   }
 
-  async findOne(id: number): Promise<Quotation> {
+  async findOne(id: number, userId: string): Promise<Quotation> {
     const quotation = await this.quotationRepository.findOne({
-      where: { id },
+      where: { id, userId },
       relations: {
         services: {
           service: {
@@ -104,10 +98,9 @@ export class QuotationsService {
     return quotation;
   }
 
-  async update(id: number, dto: UpdateQuotationDto): Promise<Quotation> {
-    const quotation = await this.findOne(id);
+  async update(id: number, dto: UpdateQuotationDto, userId: string): Promise<Quotation> {
+    const quotation = await this.findOne(id, userId);
 
-    // If services array is provided, recalculate costs
     if (dto.services && dto.services.length > 0) {
       let totalMaterialCost = 0;
       let suggestedPrice = 0;
@@ -119,9 +112,7 @@ export class QuotationsService {
 
       for (const item of dto.services) {
         const qty = item.quantity ?? 1;
-        const costBreakdown = await this.servicesService.calculateCost(
-          item.serviceId,
-        );
+        const costBreakdown = await this.servicesService.calculateCost(item.serviceId, userId);
         const materialCost =
           Math.round(costBreakdown.totalMaterialCost * qty * 100) / 100;
         const basePrice =
@@ -132,10 +123,8 @@ export class QuotationsService {
         serviceItems.push({ serviceId: item.serviceId, quantity: qty, materialCost });
       }
 
-      // Remove old service links
       await this.quotationServiceRepository.delete({ quotationId: id });
 
-      // Create new service links
       for (const item of serviceItems) {
         const qs = this.quotationServiceRepository.create({
           quotationId: id,
@@ -158,27 +147,27 @@ export class QuotationsService {
     }
 
     await this.quotationRepository.save(quotation);
-    return this.findOne(id);
+    return this.findOne(id, userId);
   }
 
-  async markArrived(id: number): Promise<Quotation> {
-    const quotation = await this.findOne(id);
+  async markArrived(id: number, userId: string): Promise<Quotation> {
+    const quotation = await this.findOne(id, userId);
     quotation.arrivedAt = new Date();
     await this.quotationRepository.save(quotation);
-    return this.findOne(id);
+    return this.findOne(id, userId);
   }
 
-  async addPhoto(id: number, photo: string): Promise<Quotation> {
-    const quotation = await this.findOne(id);
+  async addPhoto(id: number, photo: string, userId: string): Promise<Quotation> {
+    const quotation = await this.findOne(id, userId);
     const photos = Array.isArray(quotation.photos) ? [...quotation.photos] : [];
     photos.push(photo);
     quotation.photos = photos;
     await this.quotationRepository.save(quotation);
-    return this.findOne(id);
+    return this.findOne(id, userId);
   }
 
-  async removePhoto(id: number, index: number): Promise<Quotation> {
-    const quotation = await this.findOne(id);
+  async removePhoto(id: number, index: number, userId: string): Promise<Quotation> {
+    const quotation = await this.findOne(id, userId);
     const photos = Array.isArray(quotation.photos) ? [...quotation.photos] : [];
     if (index < 0 || index >= photos.length) {
       throw new NotFoundException(`Photo at index ${index} not found`);
@@ -186,15 +175,15 @@ export class QuotationsService {
     photos.splice(index, 1);
     quotation.photos = photos;
     await this.quotationRepository.save(quotation);
-    return this.findOne(id);
+    return this.findOne(id, userId);
   }
 
-  async remove(id: number): Promise<void> {
-    const quotation = await this.findOne(id);
+  async remove(id: number, userId: string): Promise<void> {
+    const quotation = await this.findOne(id, userId);
     await this.quotationRepository.remove(quotation);
   }
 
-  async getStats(): Promise<{
+  async getStats(userId: string): Promise<{
     total: number;
     pending: number;
     confirmed: number;
@@ -214,20 +203,21 @@ export class QuotationsService {
       .split('T')[0];
 
     const [total, pending, confirmed, cancelled] = await Promise.all([
-      this.quotationRepository.count(),
-      this.quotationRepository.count({ where: { status: QuotationStatus.PENDING } }),
-      this.quotationRepository.count({ where: { status: QuotationStatus.CONFIRMED } }),
-      this.quotationRepository.count({ where: { status: QuotationStatus.CANCELLED } }),
+      this.quotationRepository.count({ where: { userId } }),
+      this.quotationRepository.count({ where: { status: QuotationStatus.PENDING, userId } }),
+      this.quotationRepository.count({ where: { status: QuotationStatus.CONFIRMED, userId } }),
+      this.quotationRepository.count({ where: { status: QuotationStatus.CANCELLED, userId } }),
     ]);
 
     const todayCount = await this.quotationRepository.count({
-      where: { date: todayStr },
+      where: { date: todayStr, userId },
     });
 
     const monthlyQuotations = await this.quotationRepository.find({
       where: {
         date: Between(firstOfMonth, lastOfMonth),
         status: QuotationStatus.CONFIRMED,
+        userId,
       },
     });
 
@@ -240,7 +230,7 @@ export class QuotationsService {
       0,
     );
 
-    const allQuotations = await this.quotationRepository.find();
+    const allQuotations = await this.quotationRepository.find({ where: { userId } });
     const averageQuotationValue =
       allQuotations.length > 0
         ? allQuotations.reduce(

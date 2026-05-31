@@ -22,21 +22,22 @@ export class ServicesService {
     private readonly productService: ProductService,
   ) {}
 
-  async create(dto: CreateServiceDto): Promise<NailService> {
-    const service = this.serviceRepository.create(dto);
+  async create(dto: CreateServiceDto, userId: string): Promise<NailService> {
+    const service = this.serviceRepository.create({ ...dto, userId });
     return this.serviceRepository.save(service);
   }
 
-  async findAll(): Promise<NailService[]> {
+  async findAll(userId: string): Promise<NailService[]> {
     return this.serviceRepository.find({
+      where: { userId },
       relations: { materials: { product: true } },
       order: { name: 'ASC' },
     });
   }
 
-  async findOne(id: number): Promise<NailService> {
+  async findOne(id: number, userId: string): Promise<NailService> {
     const service = await this.serviceRepository.findOne({
-      where: { id },
+      where: { id, userId },
       relations: { materials: { product: true } },
     });
     if (!service) {
@@ -45,23 +46,24 @@ export class ServicesService {
     return service;
   }
 
-  async update(id: number, dto: UpdateServiceDto): Promise<NailService> {
-    const service = await this.findOne(id);
+  async update(id: number, dto: UpdateServiceDto, userId: string): Promise<NailService> {
+    const service = await this.findOne(id, userId);
     Object.assign(service, dto);
     return this.serviceRepository.save(service);
   }
 
-  async remove(id: number): Promise<void> {
-    const service = await this.findOne(id);
+  async remove(id: number, userId: string): Promise<void> {
+    const service = await this.findOne(id, userId);
     await this.serviceRepository.remove(service);
   }
 
   async addMaterial(
     serviceId: number,
     dto: AddMaterialDto,
+    userId: string,
   ): Promise<ServiceMaterial> {
-    await this.findOne(serviceId);
-    await this.productService.findOne(dto.productId);
+    await this.findOne(serviceId, userId);
+    await this.productService.findOne(dto.productId, userId);
 
     const existing = await this.materialRepository.findOne({
       where: { serviceId, productId: dto.productId },
@@ -84,8 +86,9 @@ export class ServicesService {
     serviceId: number,
     materialId: number,
     dto: AddMaterialDto,
+    userId: string,
   ): Promise<ServiceMaterial> {
-    await this.findOne(serviceId);
+    await this.findOne(serviceId, userId);
     const material = await this.materialRepository.findOne({
       where: { id: materialId, serviceId },
     });
@@ -98,8 +101,8 @@ export class ServicesService {
     return this.materialRepository.save(material);
   }
 
-  async removeMaterial(serviceId: number, materialId: number): Promise<void> {
-    await this.findOne(serviceId);
+  async removeMaterial(serviceId: number, materialId: number, userId: string): Promise<void> {
+    await this.findOne(serviceId, userId);
     const material = await this.materialRepository.findOne({
       where: { id: materialId, serviceId },
     });
@@ -111,7 +114,10 @@ export class ServicesService {
     await this.materialRepository.remove(material);
   }
 
-  async calculateCost(serviceId: number): Promise<{
+  async calculateCost(
+    serviceId: number,
+    userId: string,
+  ): Promise<{
     serviceId: number;
     serviceName: string;
     materials: Array<{
@@ -125,7 +131,7 @@ export class ServicesService {
     totalMaterialCost: number;
     basePrice: number;
   }> {
-    const service = await this.findOne(serviceId);
+    const service = await this.findOne(serviceId, userId);
 
     const materials = service.materials.map((m) => {
       const unitCost = Number(m.product.unitCost);

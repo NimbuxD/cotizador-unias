@@ -1,0 +1,115 @@
+<div class="policy-container">
+  <div class="policy-header">
+    <button mat-icon-button routerLink="/login" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-content">
+      <h1>Política de Privacidad</h1>
+      <p class="updated">Última actualización: {{ lastUpdated }}</p>
+    </div>
+  </div>
+
+  <div class="policy-content">
+    <section>
+      <h2>1. ¿Quiénes somos?</h2>
+      <p>
+        Cotizador de Uñas es una aplicación web diseñada para ayudar a profesionales
+        de nail art a gestionar sus servicios, productos y cotizaciones de forma personal.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Información que recopilamos</h2>
+      <p>Al iniciar sesión con Google, recopilamos:</p>
+      <ul>
+        <li><strong>Nombre y foto de perfil:</strong> Obtenidos de tu cuenta de Google para personalizar la app.</li>
+        <li><strong>Correo electrónico:</strong> Usado como identificador único de tu cuenta.</li>
+        <li><strong>ID de usuario de Google:</strong> Identificador técnico para vincular tus datos.</li>
+      </ul>
+      <p>Durante el uso de la aplicación, almacenamos:</p>
+      <ul>
+        <li>Productos y materiales que registres (nombre, precio, stock).</li>
+        <li>Servicios que configures (nombre, duración, precio base).</li>
+        <li>Cotizaciones y citas (nombre del cliente, teléfono, fecha, precio, notas).</li>
+        <li>Fotos que subas al catálogo de trabajos.</li>
+        <li>Reportes y estadísticas generadas a partir de tus datos.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>3. ¿Cómo usamos tu información?</h2>
+      <ul>
+        <li>Para mostrarte únicamente tus propios datos, separados de otros usuarios.</li>
+        <li>Para calcular precios y generar reportes personalizados.</li>
+        <li>Para autenticar tu identidad de forma segura mediante Google.</li>
+      </ul>
+      <p>
+        <strong>No usamos tus datos para publicidad, no los vendemos ni compartimos con terceros.</strong>
+      </p>
+    </section>
+
+    <section>
+      <h2>4. Almacenamiento y seguridad</h2>
+      <p>
+        Tus datos se almacenan en una base de datos PostgreSQL alojada en infraestructura
+        segura. El acceso a tus datos requiere autenticación mediante Firebase Authentication
+        de Google, lo que garantiza que solo tú puedas acceder a tu información.
+      </p>
+      <p>
+        Las sesiones se autentican mediante tokens JWT firmados por Google,
+        renovados automáticamente.
+      </p>
+    </section>
+
+    <section>
+      <h2>5. Retención de datos</h2>
+      <p>
+        Tus datos se conservan mientras tengas una cuenta activa en la aplicación.
+        Si deseas eliminar tu cuenta y todos tus datos, contáctanos directamente.
+      </p>
+    </section>
+
+    <section>
+      <h2>6. Tus derechos</h2>
+      <p>Tienes derecho a:</p>
+      <ul>
+        <li>Acceder a todos los datos que hemos almacenado sobre ti.</li>
+        <li>Exportar tus datos (disponible en la sección Reportes).</li>
+        <li>Solicitar la eliminación de tu cuenta y datos.</li>
+        <li>Revocar el acceso de la app en tu cuenta de Google en cualquier momento.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. Cookies y almacenamiento local</h2>
+      <p>
+        Usamos <code>localStorage</code> del navegador únicamente para recordar que
+        aceptaste esta política de privacidad, evitando que aparezca el diálogo de
+        consentimiento en cada inicio de sesión.
+      </p>
+    </section>
+
+    <section>
+      <h2>8. Cambios a esta política</h2>
+      <p>
+        Si realizamos cambios significativos a esta política, te notificaremos
+        mediante la aplicación antes de que los cambios entren en vigor.
+      </p>
+    </section>
+
+    <section>
+      <h2>9. Contacto</h2>
+      <p>
+        Si tienes preguntas sobre esta política de privacidad, puedes contactarnos
+        directamente a través de la aplicación.
+      </p>
+    </section>
+
+    <div class="back-action">
+      <button mat-raised-button color="primary" routerLink="/login">
+        <mat-icon>arrow_back</mat-icon>
+        Volver al inicio de sesión
+      </button>
+    </div>
+  </div>
+</div>

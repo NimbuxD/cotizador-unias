@@ -13,6 +13,7 @@ export class ReportsService {
   async getSummary(
     from?: string,
     to?: string,
+    userId?: string,
   ): Promise<{
     period: { from: string; to: string };
     totals: {
@@ -41,10 +42,11 @@ export class ReportsService {
       status: string;
     }>;
   }> {
-    // Build where clause
     const where: Record<string, unknown> = {
       status: QuotationStatus.COMPLETED,
     };
+
+    if (userId) where.userId = userId;
 
     if (from && to) {
       where.date = Between(from, to);
@@ -60,11 +62,9 @@ export class ReportsService {
       order: { date: 'ASC' },
     });
 
-    // Compute totals
     let totalRevenue = 0;
     let totalMaterialCost = 0;
 
-    // Accumulate per-service stats
     const serviceMap = new Map<
       number,
       {
@@ -102,8 +102,6 @@ export class ReportsService {
         const svcName = qs.service?.name ?? `Service #${svcId}`;
         serviceNames.push(svcName);
 
-        // Revenue per service: proportional share based on material cost ratio,
-        // or split evenly when total material cost is 0.
         const svcMaterialCost = Number(qs.materialCost);
         let svcRevenue: number;
         if (matCost > 0) {
@@ -155,7 +153,6 @@ export class ReportsService {
       profit: Math.round((s.revenue - s.materialCost) * 100) / 100,
     }));
 
-    // Determine period labels
     const periodFrom =
       from ?? (quotations.length > 0 ? quotations[0].date : '');
     const periodTo =
