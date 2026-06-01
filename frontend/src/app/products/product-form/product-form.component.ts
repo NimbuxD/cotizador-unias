@@ -38,8 +38,21 @@ export class ProductFormComponent implements OnInit {
   editId: number | null = null;
   isEdit = false;
 
-  categories = ['Bases', 'Esmaltes', 'Geles', 'Acrilicos', 'Herramientas', 'Decoracion', 'Limpieza', 'Otros'];
-  units = ['ml', 'g', 'unidad', 'par', 'caja', 'tubo', 'frasco'];
+  categories = [
+    { label: 'Esmalte', value: 'polish' },
+    { label: 'Gel', value: 'gel' },
+    { label: 'Tips', value: 'tips' },
+    { label: 'Nail Art', value: 'nail_art' },
+    { label: 'Herramientas', value: 'tools' },
+    { label: 'Insumos', value: 'supplies' },
+    { label: 'Otros', value: 'other' },
+  ];
+  units = [
+    { label: 'ml', value: 'ml' },
+    { label: 'gramos', value: 'grams' },
+    { label: 'unidades', value: 'units' },
+    { label: 'metros', value: 'meters' },
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -50,11 +63,11 @@ export class ProductFormComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      description: [''],
+      brand: [''],
       category: [''],
-      unit: ['', Validators.required],
-      costPerUnit: [0, [Validators.required, Validators.min(0)]],
-      stock: [0, [Validators.required, Validators.min(0)]],
+      unit: [''],
+      unitCost: [0, [Validators.required, Validators.min(0)]],
+      currentStock: [0, [Validators.required, Validators.min(0)]],
       minStock: [0, [Validators.required, Validators.min(0)]]
     });
   }

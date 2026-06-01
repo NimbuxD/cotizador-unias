@@ -25,6 +25,11 @@ export class UpdateQuotationDto {
   @MaxLength(50)
   clientPhone?: string;
 
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  clientEmail?: string;
+
   @IsDateString()
   @IsOptional()
   date?: string;

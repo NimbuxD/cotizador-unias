@@ -41,7 +41,7 @@ import { Product } from '../product.model';
 export class ProductsListComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
-  displayedColumns = ['name', 'category', 'unit', 'costPerUnit', 'stock', 'minStock', 'status', 'actions'];
+  displayedColumns = ['name', 'category', 'unit', 'unitCost', 'currentStock', 'minStock', 'status', 'actions'];
   loading = true;
   searchTerm = '';
 
@@ -84,7 +84,7 @@ export class ProductsListComponent implements OnInit {
   }
 
   isLowStock(product: Product): boolean {
-    return product.stock <= product.minStock;
+    return product.currentStock <= product.minStock;
   }
 
   deleteProduct(product: Product): void {

@@ -36,6 +36,9 @@ export class Quotation {
   @Column({ length: 50, nullable: true })
   clientPhone: string;
 
+  @Column({ length: 200, nullable: true })
+  clientEmail: string;
+
   @Column({ type: 'date' })
   date: string;
 

@@ -50,12 +50,16 @@ export class QuotationsService {
       userId,
       clientName: dto.clientName,
       clientPhone: dto.clientPhone,
+      clientEmail: dto.clientEmail,
       date: dto.date,
       totalMaterialCost,
       suggestedPrice,
       finalPrice: dto.finalPrice ?? suggestedPrice,
       notes: dto.notes,
-      status: QuotationStatus.PENDING,
+      status: dto.status ?? QuotationStatus.PENDING,
+      appointmentTime: dto.appointmentTime,
+      extras: dto.extras ?? [],
+      extrasCost: dto.extrasCost ?? 0,
     });
 
     const saved = await this.quotationRepository.save(quotation);

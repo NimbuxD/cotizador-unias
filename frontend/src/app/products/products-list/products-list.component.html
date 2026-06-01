@@ -53,18 +53,18 @@
               <td mat-cell *matCellDef="let product">{{ product.unit }}</td>
             </ng-container>
 
-            <ng-container matColumnDef="costPerUnit">
+            <ng-container matColumnDef="unitCost">
               <th mat-header-cell *matHeaderCellDef>Costo/Unidad</th>
               <td mat-cell *matCellDef="let product">
-                <span class="cost">{{ product.costPerUnit | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
+                <span class="cost">{{ product.unitCost | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}</span>
               </td>
             </ng-container>
 
-            <ng-container matColumnDef="stock">
+            <ng-container matColumnDef="currentStock">
               <th mat-header-cell *matHeaderCellDef>Stock</th>
               <td mat-cell *matCellDef="let product">
                 <span [class.low-stock-text]="isLowStock(product)">
-                  {{ product.stock }} {{ product.unit }}
+                  {{ product.currentStock }} {{ product.unit }}
                 </span>
               </td>
             </ng-container>

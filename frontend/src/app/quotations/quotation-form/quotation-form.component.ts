@@ -55,8 +55,8 @@ export class QuotationFormComponent implements OnInit {
 
   statusOptions = [
     { value: 'pending', label: 'Pendiente' },
-    { value: 'approved', label: 'Aprobado' },
-    { value: 'rejected', label: 'Rechazado' },
+    { value: 'confirmed', label: 'Confirmado' },
+    { value: 'cancelled', label: 'Cancelado' },
     { value: 'completed', label: 'Completado' }
   ];
 
@@ -72,6 +72,7 @@ export class QuotationFormComponent implements OnInit {
       clientName: ['', [Validators.required, Validators.minLength(2)]],
       clientPhone: [''],
       clientEmail: ['', Validators.email],
+      date: [new Date().toISOString().split('T')[0], Validators.required],
       status: ['pending', Validators.required],
       notes: [''],
       appointmentTime: [''],
@@ -140,6 +141,7 @@ export class QuotationFormComponent implements OnInit {
           clientName: q.clientName,
           clientPhone: q.clientPhone,
           clientEmail: q.clientEmail,
+          date: q.date || new Date().toISOString().split('T')[0],
           status: q.status,
           notes: q.notes,
           appointmentTime: q.appointmentTime || ''

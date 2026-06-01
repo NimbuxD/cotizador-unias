@@ -49,18 +49,27 @@
 
               <div class="two-cols">
                 <mat-form-field appearance="outline">
-                  <mat-label>Estado</mat-label>
-                  <mat-select formControlName="status">
-                    @for (opt of statusOptions; track opt.value) {
-                      <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-                    }
-                  </mat-select>
+                  <mat-label>Fecha de cita</mat-label>
+                  <input matInput type="date" formControlName="date">
+                  <mat-icon matPrefix>calendar_today</mat-icon>
+                  <mat-error *ngIf="form.get('date')?.hasError('required')">La fecha es obligatoria</mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="outline">
                   <mat-label>Hora de cita</mat-label>
                   <input matInput type="time" formControlName="appointmentTime">
                   <mat-icon matPrefix>schedule</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <div class="two-cols">
+                <mat-form-field appearance="outline">
+                  <mat-label>Estado</mat-label>
+                  <mat-select formControlName="status">
+                    @for (opt of statusOptions; track opt.value) {
+                      <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                    }
+                  </mat-select>
                 </mat-form-field>
               </div>
 

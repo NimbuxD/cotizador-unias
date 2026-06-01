@@ -33,7 +33,7 @@ export class QuotationsService {
   }
 
   getDashboardStats(): Observable<DashboardStats> {
-    return this.http.get<DashboardStats>(`${environment.apiUrl}/api/dashboard/stats`);
+    return this.http.get<DashboardStats>(`${environment.apiUrl}/api/dashboard`);
   }
 
   arrive(id: number): Observable<Quotation> {

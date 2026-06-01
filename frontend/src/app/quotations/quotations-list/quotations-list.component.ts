@@ -47,8 +47,8 @@ export class QuotationsListComponent implements OnInit {
   statusOptions = [
     { value: '', label: 'Todos' },
     { value: 'pending', label: 'Pendiente' },
-    { value: 'approved', label: 'Aprobado' },
-    { value: 'rejected', label: 'Rechazado' },
+    { value: 'confirmed', label: 'Confirmado' },
+    { value: 'cancelled', label: 'Cancelado' },
     { value: 'completed', label: 'Completado' }
   ];
 
@@ -95,8 +95,8 @@ export class QuotationsListComponent implements OnInit {
   getStatusLabel(status: QuotationStatus): string {
     const labels: Record<string, string> = {
       pending: 'Pendiente',
-      approved: 'Aprobado',
-      rejected: 'Rechazado',
+      confirmed: 'Confirmado',
+      cancelled: 'Cancelado',
       completed: 'Completado'
     };
     return labels[status] || status;

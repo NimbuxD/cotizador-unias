@@ -2,7 +2,7 @@ export interface ServiceMaterial {
   id?: number;
   productId: number;
   productName?: string;
-  quantity: number;
+  quantityUsed: number;
   unitCost?: number;
   totalCost?: number;
 }

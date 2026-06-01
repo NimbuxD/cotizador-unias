@@ -26,4 +26,9 @@ export class CreateServiceDto {
   @Min(0)
   @IsOptional()
   basePrice?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  laborCost?: number;
 }

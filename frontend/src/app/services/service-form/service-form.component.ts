@@ -12,6 +12,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTableModule } from '@angular/material/table';
+import { forkJoin, of, Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ServicesService } from '../services.service';
 import { ProductsService } from '../../products/products.service';
 import { Product } from '../../products/product.model';
@@ -44,6 +46,7 @@ export class ServiceFormComponent implements OnInit {
   editId: number | null = null;
   isEdit = false;
   products: Product[] = [];
+  removedMaterialIds: number[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -69,8 +72,8 @@ export class ServiceFormComponent implements OnInit {
   get totalMaterialCost(): number {
     return this.materials.controls.reduce((sum, ctrl) => {
       const product = this.products.find(p => p.id === ctrl.get('productId')?.value);
-      const quantity = ctrl.get('quantity')?.value || 0;
-      return sum + (product ? product.costPerUnit * quantity : 0);
+      const quantity = ctrl.get('quantityUsed')?.value || 0;
+      return sum + (product ? product.unitCost * quantity : 0);
     }, 0);
   }
 
@@ -102,7 +105,7 @@ export class ServiceFormComponent implements OnInit {
           laborCost: service.laborCost
         });
         if (service.materials) {
-          service.materials.forEach(m => this.addMaterial(m.productId, m.quantity));
+          service.materials.forEach(m => this.addMaterial(m.productId, m.quantityUsed, m.id));
         }
         this.loading = false;
       },
@@ -113,14 +116,17 @@ export class ServiceFormComponent implements OnInit {
     });
   }
 
-  addMaterial(productId?: number, quantity?: number): void {
+  addMaterial(productId?: number, quantityUsed?: number, materialId?: number): void {
     this.materials.push(this.fb.group({
+      id: [materialId || null],
       productId: [productId || null, Validators.required],
-      quantity: [quantity || 1, [Validators.required, Validators.min(0.01)]]
+      quantityUsed: [quantityUsed || 1, [Validators.required, Validators.min(0.01)]]
     }));
   }
 
   removeMaterial(index: number): void {
+    const id = this.materials.at(index).get('id')?.value;
+    if (id) this.removedMaterialIds.push(id);
     this.materials.removeAt(index);
   }
 
@@ -131,8 +137,8 @@ export class ServiceFormComponent implements OnInit {
   getMaterialCost(index: number): number {
     const ctrl = this.materials.at(index);
     const product = this.products.find(p => p.id === ctrl.get('productId')?.value);
-    const quantity = ctrl.get('quantity')?.value || 0;
-    return product ? product.costPerUnit * quantity : 0;
+    const quantity = ctrl.get('quantityUsed')?.value || 0;
+    return product ? product.unitCost * quantity : 0;
   }
 
   onSubmit(): void {
@@ -142,13 +148,39 @@ export class ServiceFormComponent implements OnInit {
     }
 
     this.saving = true;
-    const data = this.form.value;
+    const formValue = this.form.value;
+    const serviceData = {
+      name: formValue.name,
+      description: formValue.description,
+      basePrice: formValue.basePrice,
+      laborCost: formValue.laborCost,
+    };
 
-    const request = this.isEdit
-      ? this.servicesService.update(this.editId!, data)
-      : this.servicesService.create(data);
+    const saveService$ = this.isEdit
+      ? this.servicesService.update(this.editId!, serviceData)
+      : this.servicesService.create(serviceData);
 
-    request.subscribe({
+    saveService$.pipe(
+      switchMap(savedService => {
+        const serviceId = savedService.id;
+        const ops: Observable<any>[] = [];
+
+        this.removedMaterialIds.forEach(id => {
+          ops.push(this.servicesService.deleteMaterial(serviceId, id));
+        });
+
+        (formValue.materials as any[]).forEach(m => {
+          const dto = { productId: m.productId, quantityUsed: m.quantityUsed };
+          if (m.id) {
+            ops.push(this.servicesService.updateMaterial(serviceId, m.id, dto));
+          } else {
+            ops.push(this.servicesService.addMaterial(serviceId, dto));
+          }
+        });
+
+        return ops.length ? forkJoin(ops) : of(null);
+      })
+    ).subscribe({
       next: () => {
         this.snackBar.open(
           this.isEdit ? 'Servicio actualizado' : 'Servicio creado exitosamente',

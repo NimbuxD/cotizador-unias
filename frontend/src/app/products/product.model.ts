@@ -1,10 +1,10 @@
 export interface Product {
   id: number;
   name: string;
-  description?: string;
+  brand?: string;
   unit: string;
-  costPerUnit: number;
-  stock: number;
+  unitCost: number;
+  currentStock: number;
   minStock: number;
   category?: string;
   createdAt?: string;
@@ -13,10 +13,10 @@ export interface Product {
 
 export interface CreateProductDto {
   name: string;
-  description?: string;
-  unit: string;
-  costPerUnit: number;
-  stock: number;
-  minStock: number;
+  brand?: string;
   category?: string;
+  unit?: string;
+  unitCost: number;
+  currentStock?: number;
+  minStock?: number;
 }

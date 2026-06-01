@@ -5,12 +5,14 @@ import {
   IsNumber,
   IsArray,
   IsDateString,
+  IsEnum,
   Min,
   MaxLength,
   ValidateNested,
   ArrayMinSize,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { QuotationStatus, ExtraItem } from '../quotation.entity';
 
 export class QuotationServiceItemDto {
   @IsNumber()
@@ -33,8 +35,17 @@ export class CreateQuotationDto {
   @MaxLength(50)
   clientPhone?: string;
 
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  clientEmail?: string;
+
   @IsDateString()
   date: string;
+
+  @IsEnum(QuotationStatus)
+  @IsOptional()
+  status?: QuotationStatus;
 
   @IsArray()
   @ArrayMinSize(1)
@@ -50,4 +61,17 @@ export class CreateQuotationDto {
   @IsString()
   @IsOptional()
   notes?: string;
+
+  @IsString()
+  @IsOptional()
+  appointmentTime?: string;
+
+  @IsArray()
+  @IsOptional()
+  extras?: ExtraItem[];
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  extrasCost?: number;
 }

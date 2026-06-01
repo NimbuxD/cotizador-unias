@@ -52,14 +52,11 @@ export class DashboardComponent implements OnInit {
       quotations: this.quotationsService.getAll().pipe(catchError(() => of([])))
     }).subscribe(({ products, services, quotations }) => {
       this.totalProducts = products.length;
-      this.lowStockProducts = products.filter((p: Product) => p.stock <= p.minStock);
+      this.lowStockProducts = products.filter((p: Product) => p.currentStock <= p.minStock);
       this.totalServices = services.length;
 
-      const today = new Date().toDateString();
-      this.todayQuotations = quotations.filter((q: Quotation) => {
-        if (!q.createdAt) return false;
-        return new Date(q.createdAt).toDateString() === today;
-      }).length;
+      const today = new Date().toISOString().split('T')[0];
+      this.todayQuotations = quotations.filter((q: Quotation) => q.date === today).length;
 
       this.pendingQuotations = quotations.filter((q: Quotation) => q.status === 'pending').length;
       this.recentQuotations = quotations.slice(-5).reverse();
@@ -70,8 +67,8 @@ export class DashboardComponent implements OnInit {
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
       pending: 'Pendiente',
-      approved: 'Aprobado',
-      rejected: 'Rechazado',
+      confirmed: 'Confirmado',
+      cancelled: 'Cancelado',
       completed: 'Completado'
     };
     return labels[status] || status;

@@ -36,9 +36,13 @@ export interface CreateQuotationDto {
   clientName: string;
   clientPhone?: string;
   clientEmail?: string;
+  date: string;
   status?: QuotationStatus;
   notes?: string;
+  appointmentTime?: string;
   services?: QuotationService[];
+  extras?: { name: string; cost: number }[];
+  extrasCost?: number;
 }
 
 export interface DashboardStats {

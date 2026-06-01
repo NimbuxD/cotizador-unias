@@ -63,8 +63,8 @@ export class QuotationDetailComponent implements OnInit {
   getStatusLabel(status: QuotationStatus): string {
     const labels: Record<string, string> = {
       pending: 'Pendiente',
-      approved: 'Aprobado',
-      rejected: 'Rechazado',
+      confirmed: 'Confirmado',
+      cancelled: 'Cancelado',
       completed: 'Completado'
     };
     return labels[status] || status;

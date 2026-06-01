@@ -29,6 +29,9 @@ export class NailService {
   @Column('decimal', { precision: 10, scale: 2, default: 0 })
   basePrice: number;
 
+  @Column('decimal', { precision: 10, scale: 2, default: 0 })
+  laborCost: number;
+
   @CreateDateColumn()
   createdAt: Date;
 

@@ -31,4 +31,16 @@ export class ServicesService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  addMaterial(serviceId: number, dto: { productId: number; quantityUsed: number }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${serviceId}/materials`, dto);
+  }
+
+  updateMaterial(serviceId: number, materialId: number, dto: { productId: number; quantityUsed: number }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${serviceId}/materials/${materialId}`, dto);
+  }
+
+  deleteMaterial(serviceId: number, materialId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${serviceId}/materials/${materialId}`);
+  }
 }
